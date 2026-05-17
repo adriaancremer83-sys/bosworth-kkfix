@@ -9,7 +9,7 @@ interface VideoEmbedProps {
 
 export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
   return (
-    <section style={{ background: '#F4F4F4', padding: '80px' }}>
+    <section style={{ background: '#F4F4F4', padding: 'clamp(24px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0 }}

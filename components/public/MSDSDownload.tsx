@@ -9,8 +9,8 @@ interface MSDSDownloadProps {
 
 export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
   return (
-    <section style={{ background: '#111111', padding: '60px 80px' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '40px' }}>
+    <section style={{ background: '#111111', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '32px' }}>
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

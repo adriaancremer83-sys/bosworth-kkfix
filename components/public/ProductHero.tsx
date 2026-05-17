@@ -22,7 +22,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
 
   return (
     <section style={{ background: '#FFFFFF', paddingTop: '70px' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '80px 80px 60px 80px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(24px, 6vw, 80px)' }}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -47,7 +47,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
           style={{
-            fontSize: '160px',
+            fontSize: 'clamp(72px, 14vw, 160px)',
             lineHeight: 0.9,
             color: '#111111',
             marginTop: '24px',
@@ -72,13 +72,13 @@ export default function ProductHero({ product }: ProductHeroProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.45 }}
-          style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
-          <div style={{ flex: '0 0 60%' }}>
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'flex-start' }}>
+          <div style={{ flex: '1 1 280px' }}>
             <p style={{ fontSize: '24px', fontWeight: 300, color: '#444444', lineHeight: 1.4 }}>
               {product.tagline}
             </p>
           </div>
-          <div style={{ flex: '0 0 40%', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 240px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {badges.map(badge => (
               <span
                 key={badge}
@@ -91,6 +91,8 @@ export default function ProductHero({ product }: ProductHeroProps) {
                   color: '#111111',
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
+                  width: '100%',
+                  boxSizing: 'border-box',
                 }}>
                 {badge}
               </span>

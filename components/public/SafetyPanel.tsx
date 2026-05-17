@@ -78,7 +78,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
 
   return (
     <>
-      <section style={{ background: '#FFFFFF', padding: '80px' }}>
+      <section style={{ background: '#FFFFFF', padding: 'clamp(24px, 6vw, 80px)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
@@ -94,7 +94,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
             <div style={{ width: '60px', height: '3px', background: '#C8102E', margin: '16px 0 40px 0' }} />
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
             <div>
               <p style={{ fontSize: '12px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
                 Hazards &amp; Warnings
@@ -111,7 +111,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
         </div>
       </section>
 
-      <section style={{ background: '#F4F4F4', padding: '60px 80px' }}>
+      <section style={{ background: '#F4F4F4', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
             initial={{ opacity: 0 }}
@@ -125,7 +125,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
               First Aid
             </h3>
           </motion.div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             {firstAid.map((fa, i) => (
               <motion.div
                 key={fa.label}

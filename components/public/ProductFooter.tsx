@@ -2,14 +2,14 @@
 
 export default function ProductFooter() {
   return (
-    <footer style={{ background: '#0A0A0A', padding: '60px 80px 40px 80px' }}>
+    <footer style={{ background: '#0A0A0A', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px) clamp(24px, 4vw, 40px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <h2 className="font-display" style={{ fontSize: '48px', color: '#FFFFFF', lineHeight: 1 }}>
           BOSWORTH
         </h2>
         <div style={{ height: '3px', background: '#C8102E', margin: '24px 0' }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '40px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '40px' }}>
           <div>
             <p style={{ fontSize: '11px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Address
@@ -53,8 +53,10 @@ export default function ProductFooter() {
           borderTop: '1px solid #222222',
           paddingTop: '24px',
           display: 'flex',
+          flexWrap: 'wrap',
           justifyContent: 'space-between',
           alignItems: 'center',
+          gap: '12px',
         }}>
           <p style={{ fontSize: '12px', color: '#555555' }}>
             © 2025 Bosworth — A Division of Hudaco Trading Ltd.

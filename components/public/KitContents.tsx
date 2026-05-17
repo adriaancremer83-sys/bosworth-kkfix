@@ -26,7 +26,7 @@ function getIcon(name: string) {
 
 export default function KitContents({ items }: KitContentsProps) {
   return (
-    <section style={{ background: '#FFFFFF', padding: '80px' }}>
+    <section style={{ background: '#FFFFFF', padding: 'clamp(24px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0 }}
@@ -71,7 +71,7 @@ export default function KitContents({ items }: KitContentsProps) {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
           gap: '16px',
         }}>
           {items.map((item, i) => {
