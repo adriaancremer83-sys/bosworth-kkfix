@@ -1,0 +1,43 @@
+Do a complete visual redesign of ONLY the public product page 
+(products/[slug]/page.tsx and all components in components/public/).
+
+New design: clean white background, black text. Professional like 
+Hilti or Sika brand documentation. Here are the exact rules:
+
+1. Remove ALL iridescent, holographic, rainbow, animated gradient 
+   backgrounds from every card and section. Replace with flat colors.
+
+2. Color scheme:
+   - Page background: #FFFFFF
+   - Section alternating: #FFFFFF and #F7F7F7
+   - Cards: #FFFFFF background, border: 1px solid #E0E0E0
+   - Primary text: #111111
+   - Secondary text: #555555
+   - Red accent: #C8102E (Bosworth brand - keep on headings, borders, badges)
+   - Warning: #D97706 background tint #FFFBEB
+   - Navbar: #FFFFFF background, border-bottom 2px solid #C8102E
+
+3. Navbar: white background, "BOSWORTH" in Bebas Neue #C8102E, 
+   product name in #111111, bottom border 2px solid #C8102E
+
+4. Hero: white background, huge "KK-FIX" in Bebas Neue #111111, 
+   red rule underneath, badges with red border and red text on white
+
+5. Kit contents cards: white, clean border, red item number, 
+   black item name, gray description. Hover: red border
+
+6. Instruction steps: white card, 4px left border #C8102E, 
+   step number watermark in very faint red behind content,
+   warning block in #FFFBEB with amber left border
+
+7. Safety cards: 
+   hazard = #FFF5F5 background, red left border
+   ppe = #EFF6FF background, blue left border  
+   warning = #FFFBEB background, amber left border
+   disposal = #F0FDF4 background, green left border
+
+8. Footer only: keep dark #111111 background with white text
+
+9. Keep all Framer Motion animations but subtle - fade in only
+
+Do NOT touch the admin panel styling at all.

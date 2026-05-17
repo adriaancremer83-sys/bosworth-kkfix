@@ -1,0 +1,222 @@
+Replace the ENTIRE public product page with a completely new design. 
+Delete and rewrite every file in components/public/ from scratch.
+Keep all data fetching in app/products/[slug]/page.tsx exactly as is.
+Only redesign the visual components.
+
+DESIGN INSPIRATION: Hilti.com product pages. Clean, confident, 
+industrial premium. White background, strong typography, red as 
+the ONLY accent color. No textures, no gradients, no noise overlays.
+
+EXACT SPECIFICATIONS:
+
+--- GLOBALS ---
+body { background: #FFFFFF; font-family: 'DM Sans', sans-serif; }
+Remove ALL background textures, noise, patterns from globals.css
+Sections alternate between #FFFFFF and #F4F4F4 backgrounds only
+
+--- NAVBAR ---
+Background: #FFFFFF
+Border-bottom: 3px solid #C8102E
+Height: 70px
+Left: "BOSWORTH" in Bebas Neue 28px #C8102E, then vertical divider 
+1px #E0E0E0 20px tall, then product name in DM Sans 500 16px #111111
+Right: "DOWNLOAD SDS" button — border 1px #C8102E, text #C8102E, 
+8px 16px padding, 4px radius. No background.
+No other elements.
+
+--- HERO ---
+Background: #FFFFFF
+Padding: 80px 80px 60px 80px
+Max-width: 1200px centered
+
+Top row: Category badge — background #C8102E, text #FFFFFF, 
+Bebas Neue 13px letter-spacing 2px, padding 4px 12px
+
+Product name: Bebas Neue, 160px, line-height 0.9, color #111111
+Sits 24px below badge
+
+Red rule: 3px solid #C8102E, width 100%, margin 32px 0
+
+Two column row below rule:
+LEFT (60%): Tagline in DM Sans 300 24px #444444
+RIGHT (40%): Three badges in a row
+  Each badge: background #F4F4F4, border 1px solid #E0E0E0, 
+  padding 8px 16px, DM Sans 500 12px uppercase #111111
+  "🔥 FIRE RETARDANT" | "☿ MERCURY FREE" | "✓ VERSION 2"
+
+Part number: DM Sans 400 13px #999999, margin-top 16px
+"PART NO: BSW-KKF-500" — monospace
+
+Scroll indicator: simple down arrow, animate bounce, #C8102E
+
+--- VIDEO SECTION ---
+Background: #F4F4F4
+Padding: 80px
+Section label: "HOW TO USE" in DM Sans 500 12px #C8102E uppercase 
+tracking-widest, above heading
+Heading: "KK-FIX APPLICATION GUIDE" Bebas Neue 56px #111111
+3px red rule 60px wide below heading
+
+Video container: 16:9 ratio, background #111111, border-radius 8px
+Placeholder: centered content — play button circle 64px border 
+2px solid #C8102E, play icon #C8102E inside
+Below button: "INSTRUCTIONAL VIDEO" DM Sans 500 14px #FFFFFF
+"Coming Soon" DM Sans 300 12px #888888
+
+--- KIT CONTENTS ---
+Background: #FFFFFF  
+Padding: 80px
+Section label + heading same pattern as above
+Heading: "WHAT'S IN THE BOX"
+Item count badge: #C8102E background, white text, Bebas Neue
+
+Grid: 4 columns desktop, 2 tablet, 1 mobile
+Gap: 16px
+
+Each card:
+Background: #FFFFFF
+Border: 1px solid #E8E8E8
+Border-top: 3px solid #C8102E
+Padding: 24px
+Border-radius: 4px
+Transition: transform 150ms, box-shadow 150ms
+Hover: transform translateY(-3px), 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1)
+
+Card layout:
+- Item number: Bebas Neue 48px #E8E8E8 (very faint, top right)
+- Icon: lucide icon 24px #C8102E
+- Item name: DM Sans 600 15px #111111 margin-top 12px
+- Description: DM Sans 400 13px #666666 margin-top 4px
+- Quantity badge: DM Sans 500 11px #C8102E background #FFF0F0 
+  padding 2px 8px border-radius 2px margin-top 12px
+
+--- INSTRUCTIONS ---
+Background: #F4F4F4
+Padding: 80px
+Heading: "STEP-BY-STEP INSTRUCTIONS"
+
+Each step — full width, margin-bottom 16px:
+Background: #FFFFFF
+Border-radius: 4px
+Border-left: 4px solid #C8102E
+Padding: 40px 48px
+Position: relative
+Overflow: hidden
+Box-shadow: 0 2px 8px rgba(0,0,0,0.04)
+
+Watermark number (absolute, right:-10px, top:-20px):
+Bebas Neue 200px color: #F4F4F4 (barely visible)
+z-index: 0, pointer-events: none, user-select: none
+
+Content (z-index: 1, position: relative):
+Step label: DM Sans 700 11px #C8102E uppercase tracking-widest 
+  "STEP 01"
+Title: Bebas Neue 42px #111111 margin-top 4px
+Body: DM Sans 400 16px #444444 line-height 1.75 margin-top 16px
+  max-width 680px
+
+Warning block (if exists):
+margin-top 20px
+background: #FFFBEB
+border-left: 3px solid #D97706
+padding: 12px 16px
+border-radius: 0 4px 4px 0
+Display flex, gap 10px, align-items flex-start
+Icon: AlertTriangle 16px #D97706
+Text: DM Sans 400 14px #92400E
+
+Framer Motion: each step animates from opacity 0, x -20px to 
+opacity 1, x 0. whileInView, once: true, delay stagger 0.1s each.
+
+--- SAFETY ---
+Background: #FFFFFF
+Padding: 80px
+Heading: "SAFETY INFORMATION"
+
+Two equal columns, 32px gap:
+LEFT COLUMN header: "HAZARDS & WARNINGS" DM Sans 700 12px #C8102E 
+  uppercase tracking-widest, margin-bottom 16px
+RIGHT COLUMN header: "PPE & DISPOSAL" DM Sans 700 12px #1D4ED8 
+  uppercase tracking-widest, margin-bottom 16px
+
+Safety cards:
+Border-radius: 4px
+Padding: 20px 24px
+Margin-bottom: 12px
+Display flex, gap 16px, align-items flex-start
+
+hazard: background #FFF5F5, border-left 3px solid #C8102E
+  icon color #C8102E
+ppe: background #EFF6FF, border-left 3px solid #1D4ED8
+  icon color #1D4ED8
+warning: background #FFFBEB, border-left 3px solid #D97706
+  icon color #D97706
+disposal: background #F0FDF4, border-left 3px solid #16A34A
+  icon color #16A34A
+
+Card content:
+Label: DM Sans 600 14px #111111
+Description: DM Sans 400 13px #666666 margin-top 2px
+
+First Aid subsection:
+Background #F4F4F4 section below, 4 equal cards
+Card: white, border 1px #E8E8E8, padding 20px, border-radius 4px
+Icon top, label DM Sans 600, description DM Sans 400 small gray
+
+--- MSDS DOWNLOAD ---
+Background: #111111
+Padding: 60px 80px
+Display flex, justify-between, align-items center
+
+Left:
+"MATERIAL SAFETY DATA SHEET" Bebas Neue 36px #FFFFFF
+"Version 2 — Mercury Free — November 2025" DM Sans 300 14px #888888 
+  margin-top 8px
+"Prepared by A. Pieterse | Approved by L. van der Vyver" 
+  DM Sans 300 12px #666666 margin-top 4px
+
+Right:
+Download button: background #C8102E, color white, 
+  Bebas Neue 18px letter-spacing 1px
+  padding 16px 40px, border-radius 4px
+  hover: background #A50D24
+  If no URL: show email link in red on dark bg
+
+--- FOOTER ---
+Background: #0A0A0A
+Padding: 60px 80px 40px 80px
+
+Top row:
+"BOSWORTH" Bebas Neue 48px #FFFFFF
+3px red rule full width margin 24px 0
+
+3 column grid:
+Each column label: DM Sans 700 11px #C8102E uppercase tracking-widest 
+  margin-bottom 16px
+Content: DM Sans 400 14px #888888 line-height 1.8
+
+Bottom bar: 
+border-top 1px solid #222222, padding-top 24px margin-top 40px
+"© 2025 Bosworth — A Division of Hudaco Trading Ltd." 
+  DM Sans 400 12px #555555
+Right: "Part of the Hudaco Group" same style
+
+--- ANIMATIONS ---
+Only use these Framer Motion configs:
+- Sections: { opacity: 0 } → { opacity: 1 }, duration 0.4s
+- Cards: { opacity: 0, y: 16 } → { opacity: 1, y: 0 }, 
+  stagger 0.08s between cards
+- Steps: { opacity: 0, x: -20 } → { opacity: 1, x: 0 }, 
+  stagger 0.1s
+All use whileInView, viewport once: true, margin "-50px"
+NO other animations.
+
+--- REMOVE COMPLETELY ---
+- All noise texture CSS
+- All iridescent/rainbow/holographic effects  
+- All animated gradient backgrounds
+- The scrollbar custom CSS
+- Any background-image on sections or cards
+
+This is the final design. Execute exactly as specified.
