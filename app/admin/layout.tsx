@@ -1,11 +1,10 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { headers } from 'next/headers'
 import AdminShell from '@/components/admin/AdminShell'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createServerSupabaseClient()
-  const { data: { session } } = await supabase.auth.getSession()
+  const pathname = headers().get('x-pathname') ?? ''
 
-  if (!session) {
+  if (pathname === '/admin/login') {
     return (
       <div className="min-h-screen" style={{ background: '#0A0A0A' }}>
         {children}
@@ -14,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <AdminShell userEmail={session.user.email}>
+    <AdminShell userEmail={undefined}>
       {children}
     </AdminShell>
   )
