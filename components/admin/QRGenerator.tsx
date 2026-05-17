@@ -26,7 +26,7 @@ const inputStyle = {
 }
 
 export default function QRGenerator({ products, initialProductId }: QRGeneratorProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   const [selectedId, setSelectedId] = useState(initialProductId ?? products[0]?.id ?? '')
   const [errorLevel, setErrorLevel] = useState<ErrorLevel>('H')
   const [margin, setMargin] = useState(2)
