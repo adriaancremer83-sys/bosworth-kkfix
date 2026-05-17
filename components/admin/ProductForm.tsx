@@ -120,20 +120,22 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   return (
     <div>
-      <div className="flex gap-0 mb-8 border-b" style={{ borderColor: '#383838' }}>
-        {tabs.map((tab, i) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(i)}
-            className="px-5 py-3 text-sm font-medium transition-colors relative"
-            style={{ color: activeTab === i ? '#F5F5F0' : '#8A8A8A', background: 'transparent', border: 'none' }}>
-            {tab}
-            {activeTab === i && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: '#C8102E' }} />
-            )}
-          </button>
-        ))}
+      <div className="mb-8 border-b overflow-x-auto" style={{ borderColor: '#383838' }}>
+        <div className="flex gap-0 whitespace-nowrap">
+          {tabs.map((tab, i) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(i)}
+              className="px-4 md:px-5 py-3 text-sm font-medium transition-colors relative flex-shrink-0"
+              style={{ color: activeTab === i ? '#F5F5F0' : '#8A8A8A', background: 'transparent', border: 'none' }}>
+              {tab}
+              {activeTab === i && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5" style={{ background: '#C8102E' }} />
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mb-24">

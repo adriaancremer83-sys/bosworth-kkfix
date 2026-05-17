@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import AdminSidebar from '@/components/admin/AdminSidebar'
+import AdminShell from '@/components/admin/AdminShell'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient()
@@ -14,11 +14,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#0F0F0F' }}>
-      <AdminSidebar userEmail={session.user.email} />
-      <main className="flex-1 ml-[260px] p-8 overflow-auto min-h-screen">
-        {children}
-      </main>
-    </div>
+    <AdminShell userEmail={session.user.email}>
+      {children}
+    </AdminShell>
   )
 }

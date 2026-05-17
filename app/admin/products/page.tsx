@@ -18,10 +18,10 @@ export default async function AdminProductsPage() {
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded text-sm font-medium tracking-wide"
+          className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded text-sm font-medium tracking-wide"
           style={{ background: '#C8102E', color: '#F5F5F0' }}>
           <PlusCircle size={16} />
-          Add New Product
+          <span className="hidden md:inline">Add New Product</span>
         </Link>
       </div>
 
