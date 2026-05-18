@@ -86,6 +86,7 @@ export async function upsertInstructions(
       title: inst.title ?? '',
       description: inst.description ?? '',
       warning: inst.warning ?? null,
+      image_url: inst.image_url ?? null,
     }))
   )
   if (error) throw new Error(error.message)

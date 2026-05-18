@@ -66,45 +66,62 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
                 {String(step.step_number).padStart(2, '0')}
               </span>
 
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <p style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  color: '#C8102E',
-                  textTransform: 'uppercase',
-                  letterSpacing: '3px',
-                }}>
-                  Step {String(step.step_number).padStart(2, '0')}
-                </p>
-                <h3 className="font-display" style={{ fontSize: '42px', color: '#111111', marginTop: '4px', lineHeight: 1 }}>
-                  {step.title}
-                </h3>
-                <p style={{
-                  fontSize: '16px',
-                  fontWeight: 400,
-                  color: '#444444',
-                  lineHeight: 1.75,
-                  marginTop: '16px',
-                  maxWidth: '680px',
-                }}>
-                  {step.description}
-                </p>
-
-                {step.warning && (
-                  <div style={{
-                    marginTop: '20px',
-                    background: '#FFFBEB',
-                    borderLeft: '3px solid #D97706',
-                    padding: '12px 16px',
-                    borderRadius: '0 4px 4px 0',
-                    display: 'flex',
-                    gap: '10px',
-                    alignItems: 'flex-start',
+              <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: '40px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                <div style={{ flex: '1 1 300px' }}>
+                  <p style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#C8102E',
+                    textTransform: 'uppercase',
+                    letterSpacing: '3px',
                   }}>
-                    <AlertTriangle size={16} style={{ color: '#D97706', flexShrink: 0, marginTop: '2px' }} />
-                    <p style={{ fontSize: '14px', fontWeight: 400, color: '#92400E', lineHeight: 1.5 }}>
-                      {step.warning}
-                    </p>
+                    Step {String(step.step_number).padStart(2, '0')}
+                  </p>
+                  <h3 className="font-display" style={{ fontSize: '42px', color: '#111111', marginTop: '4px', lineHeight: 1 }}>
+                    {step.title}
+                  </h3>
+                  <p style={{
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    color: '#444444',
+                    lineHeight: 1.75,
+                    marginTop: '16px',
+                  }}>
+                    {step.description}
+                  </p>
+
+                  {step.warning && (
+                    <div style={{
+                      marginTop: '20px',
+                      background: '#FFFBEB',
+                      borderLeft: '3px solid #D97706',
+                      padding: '12px 16px',
+                      borderRadius: '0 4px 4px 0',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'flex-start',
+                    }}>
+                      <AlertTriangle size={16} style={{ color: '#D97706', flexShrink: 0, marginTop: '2px' }} />
+                      <p style={{ fontSize: '14px', fontWeight: 400, color: '#92400E', lineHeight: 1.5 }}>
+                        {step.warning}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {step.image_url && (
+                  <div style={{ flex: '0 0 auto', maxWidth: '280px', width: '100%' }}>
+                    <img
+                      src={step.image_url}
+                      alt={`Step ${step.step_number} — ${step.title}`}
+                      style={{
+                        width: '100%',
+                        borderRadius: '4px',
+                        display: 'block',
+                        objectFit: 'cover',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                      }}
+                    />
                   </div>
                 )}
               </div>

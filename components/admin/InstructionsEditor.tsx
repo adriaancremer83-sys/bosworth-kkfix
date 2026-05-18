@@ -1,7 +1,9 @@
 'use client'
 
-import { X, PlusCircle, ChevronUp, ChevronDown } from 'lucide-react'
+import { useState } from 'react'
+import { X, PlusCircle, ChevronUp, ChevronDown, ImageIcon, Loader2 } from 'lucide-react'
 import type { Instruction } from '@/lib/types'
+import { createClient } from '@/lib/supabase'
 
 type EditableInstruction = Partial<Instruction> & { _key: string }
 
@@ -25,8 +27,10 @@ const inputStyle = {
 const textareaStyle = { ...inputStyle, resize: 'vertical' as const, lineHeight: '1.6' }
 
 export default function InstructionsEditor({ items, onChange }: InstructionsEditorProps) {
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null)
+
   function add() {
-    onChange([...items, { _key: crypto.randomUUID(), step_number: items.length + 1, title: '', description: '', warning: null }])
+    onChange([...items, { _key: crypto.randomUUID(), step_number: items.length + 1, title: '', description: '', warning: null, image_url: null }])
   }
 
   function update(key: string, field: keyof EditableInstruction, value: string | null) {
@@ -51,6 +55,27 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
     onChange(next.map((item, idx) => ({ ...item, step_number: idx + 1 })))
   }
 
+  async function uploadImage(key: string, file: File) {
+    setUploadingKey(key)
+    try {
+      const supabase = createClient()
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const fileName = `step-${key}-${Date.now()}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('step-images')
+        .upload(fileName, file, { cacheControl: '3600', upsert: true })
+      if (uploadError) throw uploadError
+      const { data: { publicUrl } } = supabase.storage
+        .from('step-images')
+        .getPublicUrl(fileName)
+      update(key, 'image_url', publicUrl)
+    } catch (err) {
+      console.error('Image upload failed:', err)
+    } finally {
+      setUploadingKey(null)
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col gap-4 mb-4">
@@ -73,6 +98,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                 </button>
               </div>
             </div>
+
             <div className="flex flex-col gap-3">
               <input
                 placeholder="Step title *"
@@ -104,6 +130,47 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                 onFocus={e => { e.currentTarget.style.borderColor = '#D97706' }}
                 onBlur={e => { e.currentTarget.style.borderColor = item.warning ? 'rgba(217,119,6,0.5)' : '#383838' }}
               />
+
+              <div>
+                <p className="text-xs mb-1.5 uppercase tracking-wide" style={{ color: '#8A8A8A' }}>Step Photo</p>
+                {item.image_url ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={item.image_url}
+                      alt="Step photo"
+                      style={{ height: '120px', width: 'auto', maxWidth: '100%', borderRadius: '6px', display: 'block', objectFit: 'cover', border: '1px solid #383838' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => update(item._key!, 'image_url', null)}
+                      className="absolute top-1 right-1 p-1 rounded-full"
+                      style={{ background: 'rgba(0,0,0,0.75)', color: '#F5F5F0' }}>
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded text-xs"
+                    style={{
+                      border: '1px dashed #383838',
+                      color: uploadingKey === item._key ? '#C8102E' : '#8A8A8A',
+                      cursor: uploadingKey ? 'not-allowed' : 'pointer',
+                    }}
+                    onMouseEnter={e => { if (!uploadingKey) { e.currentTarget.style.borderColor = '#C8102E'; e.currentTarget.style.color = '#C8102E' } }}
+                    onMouseLeave={e => { if (!uploadingKey) { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' } }}>
+                    {uploadingKey === item._key
+                      ? <><Loader2 size={13} className="animate-spin" />Uploading…</>
+                      : <><ImageIcon size={13} />Add Photo</>}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploadingKey !== null}
+                      onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(item._key!, f); e.target.value = '' }}
+                    />
+                  </label>
+                )}
+              </div>
             </div>
           </div>
         ))}

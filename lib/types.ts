@@ -21,6 +21,7 @@ export interface Instruction {
   title: string
   description: string
   warning: string | null
+  image_url: string | null
   created_at: string
 }
 
