@@ -13,17 +13,14 @@ export async function createProduct(productData: Partial<Product>): Promise<Prod
   return data[0] as Product
 }
 
-export async function updateProduct(id: string, productData: Partial<Product>): Promise<Product> {
+export async function updateProduct(id: string, productData: Partial<Product>): Promise<void> {
   const supabase = createClient()
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('products')
     .update(productData)
     .eq('id', id)
-    .select()
 
   if (error) throw new Error(error.message)
-  if (!data || data.length === 0) throw new Error('Product not found')
-  return data[0] as Product
 }
 
 export async function deleteProduct(id: string): Promise<void> {
