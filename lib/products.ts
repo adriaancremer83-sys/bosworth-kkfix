@@ -7,10 +7,10 @@ export async function createProduct(productData: Partial<Product>): Promise<Prod
     .from('products')
     .insert(productData)
     .select()
-    .single()
 
   if (error) throw new Error(error.message)
-  return data as Product
+  if (!data || data.length === 0) throw new Error('Failed to create product')
+  return data[0] as Product
 }
 
 export async function updateProduct(id: string, productData: Partial<Product>): Promise<Product> {
@@ -20,10 +20,10 @@ export async function updateProduct(id: string, productData: Partial<Product>): 
     .update(productData)
     .eq('id', id)
     .select()
-    .single()
 
   if (error) throw new Error(error.message)
-  return data as Product
+  if (!data || data.length === 0) throw new Error('Product not found')
+  return data[0] as Product
 }
 
 export async function deleteProduct(id: string): Promise<void> {
