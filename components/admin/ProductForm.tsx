@@ -268,10 +268,9 @@ export default function ProductForm({ product }: ProductFormProps) {
         </button>
         <button
           type="button"
-          onClick={handleSave}
-          disabled={loading}
+          onClick={loading ? undefined : handleSave}
           className="flex items-center gap-2 px-6 py-2.5 rounded text-sm font-medium"
-          style={{ background: loading ? '#383838' : '#C8102E', color: '#F5F5F0' }}>
+          style={{ backgroundColor: loading ? '#383838' : '#C8102E', color: loading ? '#8A8A8A' : '#F5F5F0', cursor: loading ? 'not-allowed' : 'pointer' }}>
           {loading ? <><Loader2 size={14} className="animate-spin" />Saving…</> : `${isEdit ? 'Update' : 'Create'} Product`}
         </button>
       </div>
