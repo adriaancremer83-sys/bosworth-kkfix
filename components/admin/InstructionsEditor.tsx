@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { X, PlusCircle, ChevronUp, ChevronDown, ImageIcon, Loader2 } from 'lucide-react'
+import { X, PlusCircle, ChevronUp, ChevronDown, ImageIcon, Loader2, RefreshCw } from 'lucide-react'
 import type { Instruction } from '@/lib/types'
-import { createClient } from '@/lib/supabase'
 
 type EditableInstruction = Partial<Instruction> & { _key: string }
 
@@ -28,6 +27,7 @@ const textareaStyle = { ...inputStyle, resize: 'vertical' as const, lineHeight: 
 
 export default function InstructionsEditor({ items, onChange }: InstructionsEditorProps) {
   const [uploadingKey, setUploadingKey] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
 
   function add() {
     onChange([...items, { _key: crypto.randomUUID(), step_number: items.length + 1, title: '', description: '', warning: null, image_url: null }])
@@ -57,20 +57,16 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
 
   async function uploadImage(key: string, file: File) {
     setUploadingKey(key)
+    setUploadError(null)
     try {
-      const supabase = createClient()
-      const ext = file.name.split('.').pop() ?? 'jpg'
-      const fileName = `step-${key}-${Date.now()}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('step-images')
-        .upload(fileName, file, { cacheControl: '3600', upsert: true })
-      if (uploadError) throw uploadError
-      const { data: { publicUrl } } = supabase.storage
-        .from('step-images')
-        .getPublicUrl(fileName)
-      update(key, 'image_url', publicUrl)
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Upload failed')
+      update(key, 'image_url', json.url)
     } catch (err) {
-      console.error('Image upload failed:', err)
+      setUploadError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploadingKey(null)
     }
@@ -78,6 +74,16 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
 
   return (
     <div>
+      {uploadError && (
+        <div className="mb-4 px-4 py-3 rounded flex items-center justify-between gap-3"
+          style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.3)' }}>
+          <p className="text-sm" style={{ color: '#C8102E' }}>{uploadError}</p>
+          <button type="button" onClick={() => setUploadError(null)} style={{ color: '#C8102E' }}>
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 mb-4">
         {items.length === 0 && (
           <p className="text-sm py-4 text-center" style={{ color: '#8A8A8A' }}>No steps yet. Add the first instruction step below.</p>
@@ -131,30 +137,54 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                 onBlur={e => { e.currentTarget.style.borderColor = item.warning ? 'rgba(217,119,6,0.5)' : '#383838' }}
               />
 
+              {/* Photo section */}
               <div>
-                <p className="text-xs mb-1.5 uppercase tracking-wide" style={{ color: '#8A8A8A' }}>Step Photo</p>
+                <p className="text-xs mb-2 uppercase tracking-wide" style={{ color: '#8A8A8A' }}>Step Photo</p>
+
                 {item.image_url ? (
-                  <div className="relative inline-block">
+                  <div className="flex items-start gap-3">
                     <img
                       src={item.image_url}
                       alt="Step photo"
-                      style={{ height: '120px', width: 'auto', maxWidth: '100%', borderRadius: '6px', display: 'block', objectFit: 'cover', border: '1px solid #383838' }}
+                      style={{ height: '100px', width: 'auto', maxWidth: '180px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #383838', display: 'block' }}
                     />
-                    <button
-                      type="button"
-                      onClick={() => update(item._key!, 'image_url', null)}
-                      className="absolute top-1 right-1 p-1 rounded-full"
-                      style={{ background: 'rgba(0,0,0,0.75)', color: '#F5F5F0' }}>
-                      <X size={12} />
-                    </button>
+                    <div className="flex flex-col gap-2">
+                      <label
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs"
+                        style={{ border: '1px solid #383838', color: '#8A8A8A', cursor: uploadingKey ? 'not-allowed' : 'pointer', background: '#1C1C1C' }}
+                        onMouseEnter={e => { if (!uploadingKey) e.currentTarget.style.color = '#F5F5F0' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = '#8A8A8A' }}>
+                        {uploadingKey === item._key
+                          ? <><Loader2 size={12} className="animate-spin" />Uploading…</>
+                          : <><RefreshCw size={12} />Replace</>}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingKey !== null}
+                          onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(item._key!, f); e.target.value = '' }}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => update(item._key!, 'image_url', null)}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs"
+                        style={{ border: '1px solid rgba(200,16,46,0.3)', color: '#C8102E', background: 'transparent', cursor: 'pointer' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,16,46,0.1)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
+                        <X size={12} />
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <label
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded text-xs"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded text-xs"
                     style={{
                       border: '1px dashed #383838',
-                      color: uploadingKey === item._key ? '#C8102E' : '#8A8A8A',
+                      color: '#8A8A8A',
                       cursor: uploadingKey ? 'not-allowed' : 'pointer',
+                      background: 'transparent',
                     }}
                     onMouseEnter={e => { if (!uploadingKey) { e.currentTarget.style.borderColor = '#C8102E'; e.currentTarget.style.color = '#C8102E' } }}
                     onMouseLeave={e => { if (!uploadingKey) { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' } }}>
@@ -175,6 +205,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
           </div>
         ))}
       </div>
+
       <button
         type="button"
         onClick={add}
