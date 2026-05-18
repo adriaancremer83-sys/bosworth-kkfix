@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react'
-import { createProduct, updateProduct, upsertInstructions, upsertKitContents, upsertSafetyItems } from '@/lib/products'
+import { createProduct, updateProduct, upsertInstructions, upsertKitContents, upsertSafetyItems } from '@/lib/admin-actions'
 import type { ProductWithRelations, Instruction, KitContent, SafetyItem } from '@/lib/types'
 import KitContentsEditor from './KitContentsEditor'
 import InstructionsEditor from './InstructionsEditor'

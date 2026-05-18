@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pencil, QrCode, Eye, EyeOff, Trash2, Loader2 } from 'lucide-react'
-import { deleteProduct, toggleProductActive } from '@/lib/products'
+import { deleteProduct, toggleProductActive } from '@/lib/admin-actions'
 import type { Product } from '@/lib/types'
 
 interface ProductsTableProps {
