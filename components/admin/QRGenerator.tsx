@@ -137,7 +137,7 @@ export default function QRGenerator({ products, initialProductId }: QRGeneratorP
     <>
       <div className="no-print grid md:grid-cols-2 gap-8">
         <div>
-          <h1 className="font-display text-5xl tracking-wide mb-6" style={{ color: '#F5F5F0' }}>QR Code Generator</h1>
+          <h1 className="font-display text-3xl md:text-5xl tracking-wide mb-6" style={{ color: '#F5F5F0' }}>QR Code Generator</h1>
 
           <div className="flex flex-col gap-5 p-6 rounded-lg mb-6" style={{ background: '#1C1C1C', border: '1px solid #383838' }}>
             <div>

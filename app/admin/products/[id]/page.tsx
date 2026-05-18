@@ -35,7 +35,7 @@ export default async function EditProductPage({ params }: PageProps) {
 
   return (
     <div>
-      <h1 className="font-display text-5xl tracking-wide mb-8" style={{ color: '#F5F5F0' }}>
+      <h1 className="font-display text-3xl md:text-5xl tracking-wide mb-8 leading-tight" style={{ color: '#F5F5F0' }}>
         Edit — {product.name}
       </h1>
       <ProductForm product={product} />

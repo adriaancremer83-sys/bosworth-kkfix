@@ -257,7 +257,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-[260px] right-0 px-8 py-4 flex items-center justify-between"
+      <div className="fixed bottom-0 left-0 md:left-[260px] right-0 px-4 md:px-8 py-4 flex items-center justify-between"
         style={{ background: '#0F0F0F', borderTop: '1px solid #383838', zIndex: 10 }}>
         <button
           type="button"

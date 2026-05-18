@@ -51,8 +51,13 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
         {items.map(item => {
           const typeColor = typeColors[item.type ?? 'warning']?.color ?? '#8A8A8A'
           return (
-            <div key={item._key} className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#0A0A0A', border: `1px solid ${typeColor}33` }}>
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <div key={item._key} className="p-3 rounded-lg" style={{ background: '#0A0A0A', border: `1px solid ${typeColor}33` }}>
+              <div className="flex justify-end mb-2">
+                <button type="button" onClick={() => remove(item._key!)} className="p-1 rounded" style={{ color: '#C8102E' }}>
+                  <X size={14} />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 <select
                   value={item.type ?? 'warning'}
                   onChange={e => update(item._key!, 'type', e.target.value)}
@@ -63,7 +68,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
                   <option value="disposal">Disposal</option>
                 </select>
                 <input
-                  placeholder="Icon name (e.g. flame)"
+                  placeholder="Icon (e.g. flame)"
                   value={item.icon ?? ''}
                   onChange={e => update(item._key!, 'icon', e.target.value)}
                   style={inputStyle}
@@ -87,9 +92,6 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
                   onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                 />
               </div>
-              <button type="button" onClick={() => remove(item._key!)} className="mt-2 p-1 rounded flex-shrink-0" style={{ color: '#C8102E' }}>
-                <X size={14} />
-              </button>
             </div>
           )
         })}

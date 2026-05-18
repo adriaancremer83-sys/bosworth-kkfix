@@ -56,12 +56,25 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
           <p className="text-sm py-4 text-center" style={{ color: '#8A8A8A' }}>No kit contents yet. Add items below.</p>
         )}
         {items.map((item, i) => (
-          <div key={item._key} className="flex items-start gap-2 p-3 rounded-lg" style={{ background: '#0A0A0A', border: '1px solid #383838' }}>
-            <GripVertical size={16} className="mt-2.5 flex-shrink-0" style={{ color: '#383838' }} />
-            <span className="font-display text-xl flex-shrink-0 mt-1.5 w-6 text-center" style={{ color: '#C8102E' }}>
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div key={item._key} className="p-3 rounded-lg" style={{ background: '#0A0A0A', border: '1px solid #383838' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <GripVertical size={16} className="flex-shrink-0" style={{ color: '#383838' }} />
+              <span className="font-display text-lg flex-shrink-0 w-6 text-center" style={{ color: '#C8102E' }}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div className="flex items-center gap-1 ml-auto">
+                <button type="button" onClick={() => moveUp(i)} className="p-1 rounded" style={{ color: '#8A8A8A' }}>
+                  <ChevronUp size={14} />
+                </button>
+                <button type="button" onClick={() => moveDown(i)} className="p-1 rounded" style={{ color: '#8A8A8A' }}>
+                  <ChevronDown size={14} />
+                </button>
+                <button type="button" onClick={() => remove(item._key!)} className="p-1 rounded" style={{ color: '#C8102E' }}>
+                  <X size={14} />
+                </button>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input
                 placeholder="Item name *"
                 value={item.item_name ?? ''}
@@ -87,17 +100,6 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
                 onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
               />
             </div>
-            <div className="flex flex-col gap-1 flex-shrink-0">
-              <button type="button" onClick={() => moveUp(i)} className="p-1 rounded" style={{ color: '#8A8A8A' }}>
-                <ChevronUp size={14} />
-              </button>
-              <button type="button" onClick={() => moveDown(i)} className="p-1 rounded" style={{ color: '#8A8A8A' }}>
-                <ChevronDown size={14} />
-              </button>
-            </div>
-            <button type="button" onClick={() => remove(item._key!)} className="mt-2 p-1 rounded flex-shrink-0" style={{ color: '#C8102E' }}>
-              <X size={14} />
-            </button>
           </div>
         ))}
       </div>
