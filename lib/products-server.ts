@@ -1,30 +1,41 @@
-import { createServerSupabaseClient } from './supabase-server'
+import { createServiceSupabaseClient } from './supabase-server'
 import type { Product, Instruction, KitContent, SafetyItem, TechSpec, ProductWithRelations } from './types'
 
 export async function getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
   try {
-    const supabase = await createServerSupabaseClient()
-    const { data, error } = await supabase
+    const supabase = createServiceSupabaseClient()
+
+    // Fetch the product first — fail fast if it doesn't exist
+    const { data: product, error: productError } = await supabase
       .from('products')
-      .select(`
-        *,
-        instructions (*),
-        safety_items (*),
-        kit_contents (*),
-        tech_specs (*)
-      `)
+      .select('*')
       .eq('slug', slug)
       .eq('is_active', true)
       .single()
 
-    if (error || !data) return null
+    if (productError || !product) return null
+
+    const id = (product as Product).id
+
+    // Fetch all related tables in parallel — each failure degrades gracefully to []
+    const [
+      { data: instructions },
+      { data: safety_items },
+      { data: kit_contents },
+      { data: tech_specs },
+    ] = await Promise.all([
+      supabase.from('instructions').select('*').eq('product_id', id).order('step_number', { ascending: true }),
+      supabase.from('safety_items').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+      supabase.from('kit_contents').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+      supabase.from('tech_specs').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+    ])
 
     return {
-      ...data,
-      instructions: (data.instructions as Instruction[]).sort((a, b) => a.step_number - b.step_number),
-      safety_items: (data.safety_items as SafetyItem[]).sort((a, b) => a.sort_order - b.sort_order),
-      kit_contents: (data.kit_contents as KitContent[]).sort((a, b) => a.sort_order - b.sort_order),
-      tech_specs: ((data.tech_specs ?? []) as TechSpec[]).sort((a, b) => a.sort_order - b.sort_order),
+      ...product,
+      instructions: (instructions ?? []) as Instruction[],
+      safety_items:  (safety_items  ?? []) as SafetyItem[],
+      kit_contents:  (kit_contents  ?? []) as KitContent[],
+      tech_specs:    (tech_specs    ?? []) as TechSpec[],
     } as ProductWithRelations
   } catch {
     return null
@@ -33,7 +44,7 @@ export async function getProductBySlug(slug: string): Promise<ProductWithRelatio
 
 export async function getAllProducts(): Promise<Product[]> {
   try {
-    const supabase = await createServerSupabaseClient()
+    const supabase = createServiceSupabaseClient()
     const { data, error } = await supabase
       .from('products')
       .select('*')
