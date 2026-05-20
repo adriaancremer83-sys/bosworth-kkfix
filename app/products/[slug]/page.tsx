@@ -1,4 +1,3 @@
-import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProductBySlug } from '@/lib/products-server'
@@ -21,14 +20,39 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const product = await getProductBySlug(params.slug)
   return {
-    title: `${product?.name ?? 'Product'} | Bosworth`,
-    description: product?.tagline ?? undefined,
+    title: `${product?.name ?? 'KK-Fix'} | Bosworth`,
+    description: product?.tagline ?? 'Professional Conveyor Belt Repair Kit',
   }
+}
+
+function ComingSoon() {
+  return (
+    <main style={{ background: '#0A0A0A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar productName="KK-Fix" msdsUrl={null} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', textAlign: 'center' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <span style={{ fontSize: '11px', letterSpacing: '3px', color: '#E8650A', textTransform: 'uppercase', fontWeight: 600 }}>Bosworth</span>
+        </div>
+        <h1 style={{ fontSize: 'clamp(48px, 10vw, 96px)', fontWeight: 800, color: '#F5F5F0', lineHeight: 1, letterSpacing: '-2px', fontFamily: 'Barlow Condensed, sans-serif', textTransform: 'uppercase', marginBottom: '8px' }}>
+          KK-FIX
+        </h1>
+        <p style={{ fontSize: '14px', color: '#8A8A8A', marginBottom: '48px', letterSpacing: '2px', textTransform: 'uppercase' }}>
+          Conveyor Belt &amp; Rubber Lagging Repair Kit
+        </p>
+        <div style={{ width: '48px', height: '2px', background: '#E8650A', marginBottom: '48px' }} />
+        <p style={{ fontSize: '18px', color: '#F5F5F0', fontWeight: 500, marginBottom: '12px' }}>Content coming soon</p>
+        <p style={{ fontSize: '14px', color: '#555', maxWidth: '400px' }}>
+          Product details are being configured. Scan this code again shortly to view the full repair guide.
+        </p>
+      </div>
+      <ProductFooter />
+    </main>
+  )
 }
 
 export default async function ProductPage({ params }: PageProps) {
   const product = await getProductBySlug(params.slug)
-  if (!product) notFound()
+  if (!product) return <ComingSoon />
 
   return (
     <main>

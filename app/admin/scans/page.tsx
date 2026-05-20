@@ -3,14 +3,30 @@
 import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase'
-import ScanLineChart from '@/components/admin/ScanLineChart'
+import ScanErrorBoundary from '@/components/admin/ScanErrorBoundary'
 import {
   MapPin, Monitor, Smartphone, Tablet,
   Download, RefreshCw, Loader2, Activity,
   Globe, Calendar, Package,
 } from 'lucide-react'
 
-const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), { ssr: false })
+const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Loader2 size={24} style={{ color: '#E8650A', animation: 'spin 1s linear infinite' }} />
+    </div>
+  ),
+})
+
+const ScanLineChart = dynamic(() => import('@/components/admin/ScanLineChart'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Loader2 size={18} style={{ color: '#E8650A', animation: 'spin 1s linear infinite' }} />
+    </div>
+  ),
+})
 
 interface Scan {
   id: string
@@ -196,7 +212,9 @@ export default function ScansPage() {
         <p style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '16px' }}>
           Scans per day — last 30 days
         </p>
-        <ScanLineChart data={dayCounts} />
+        <ScanErrorBoundary label="Chart" height="160px">
+          <ScanLineChart data={dayCounts} />
+        </ScanErrorBoundary>
       </div>
 
       {/* Map */}
@@ -212,7 +230,9 @@ export default function ScansPage() {
             <Loader2 size={24} className="animate-spin" style={{ color: ORANGE }} />
           </div>
         ) : (
-          <ScanMap points={mapPoints} />
+          <ScanErrorBoundary label="Map" height="400px">
+            <ScanMap points={mapPoints} />
+          </ScanErrorBoundary>
         )}
       </div>
 
