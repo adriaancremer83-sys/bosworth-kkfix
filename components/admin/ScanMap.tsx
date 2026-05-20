@@ -15,6 +15,38 @@ interface ScanMapProps {
   points: ScanPoint[]
 }
 
+const LEAFLET_VERSION = '1.9.4'
+const CDN = `https://unpkg.com/leaflet@${LEAFLET_VERSION}/dist`
+
+function injectLeafletCSS() {
+  if (document.querySelector('link[data-leaflet]')) return
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = `${CDN}/leaflet.css`
+  link.setAttribute('data-leaflet', '')
+  document.head.appendChild(link)
+}
+
+function loadLeafletScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if ((window as any).L) { resolve(); return }
+
+    const existing = document.querySelector('script[data-leaflet]') as HTMLScriptElement | null
+    if (existing) {
+      existing.addEventListener('load', () => resolve())
+      existing.addEventListener('error', reject)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = `${CDN}/leaflet.js`
+    script.setAttribute('data-leaflet', '')
+    script.onload = () => resolve()
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
+
 export default function ScanMap({ points }: ScanMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<any>(null)
@@ -25,19 +57,17 @@ export default function ScanMap({ points }: ScanMapProps) {
     let cancelled = false
 
     async function init() {
-      // Dynamic import keeps Leaflet 100% out of SSR/build-time execution
-      const L = (await import('leaflet')).default
-      // CSS must be imported after L is loaded so it lands in the same chunk
-      await import('leaflet/dist/leaflet.css')
+      injectLeafletCSS()
+      await loadLeafletScript()
 
       if (cancelled || !containerRef.current) return
 
-      // Tear down any previous instance (e.g. on hot-reload)
       if (mapRef.current) {
         mapRef.current.remove()
         mapRef.current = null
       }
 
+      const L = (window as any).L
       const valid = points.filter(p => p.lat != null && p.lng != null)
 
       const center: [number, number] = valid.length > 0
@@ -45,7 +75,7 @@ export default function ScanMap({ points }: ScanMapProps) {
             valid.reduce((s, p) => s + p.lat, 0) / valid.length,
             valid.reduce((s, p) => s + p.lng, 0) / valid.length,
           ]
-        : [-26, 28] // South Africa default
+        : [-26, 28]
 
       const map = L.map(containerRef.current, {
         center,
