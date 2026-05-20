@@ -1,0 +1,238 @@
+I need to completely rebuild and elevate the KK-Fix 
+product landing page. This is a QR code landing page 
+— when someone scans a QR code on KK-Fix packaging 
+they land here.
+
+I have an existing KK-Fix Next.js application at 
+C:\Users\unkow2n\kk-fix
+
+STEP 1 — READ THE CODEBASE FIRST:
+Before writing any code, read and understand 
+the entire existing project:
+- Read the folder structure
+- Read all existing pages and components
+- Read the existing admin functionality
+- Read the database schema if it exists
+- Read package.json for current dependencies
+- Understand what's already built
+
+Tell me what you found before proceeding.
+
+STEP 2 — THEN REBUILD TO WORLD CLASS:
+
+Keep all existing functionality that works.
+Enhance everything to premium level.
+
+═══════════════════════════════════════
+BRAND & AESTHETIC — KK-FIX IDENTITY
+═══════════════════════════════════════
+
+NOT red and black like Bosworth main site.
+KK-Fix gets its own premium product identity.
+
+Colors:
+- Primary accent: #E8650A (Bosworth orange)
+- Background: #0a0a0a
+- Secondary bg: #111111  
+- Steel accent: #8a9ab0
+- White: #f0f0f0
+- Success: #22c55e
+- Warning: #f59e0b
+
+Typography:
+- Headings: "Barlow Condensed"
+- Body: "Inter"
+- Technical: "JetBrains Mono"
+- Add Bosworth logo in the Nav bar and footer C:\Users\unkow2n\public\images
+
+Feel: Premium industrial product — 
+think 3M, Loctite, Henkel.
+Mobile-first — QR scans happen on mine sites.
+
+═══════════════════════════════════════
+ADMIN CMS — PHOTO UPLOAD CAPABILITY
+═══════════════════════════════════════
+
+The admin must be able to manage ALL content
+including photos. Enhance the existing admin with:
+
+SECTION 1 — BASIC INFORMATION (admin editable)
+Fields:
+- Product name
+- Product subtitle  
+- Part number
+- Version
+- Badge labels (fire retardant, mercury free etc)
+- Hero description text
+- HERO IMAGE upload — displays in hero section
+- PRODUCT PHOTO upload — main product image
+- Multiple gallery images (up to 6)
+
+SECTION 2 — KIT CONTENTS (admin editable)
+For each kit item:
+- Item number
+- Item name
+- Description
+- Quantity
+- ITEM PHOTO upload — shows next to each item
+Admin can add/remove/reorder items.
+
+SECTION 3 — INSTRUCTIONS (admin editable)
+For each step:
+- Step number (auto)
+- Step title
+- Full instruction text
+- Safety warning text (optional)
+- Estimated time
+- STEP PHOTO/DIAGRAM upload — 
+  shows alongside the instruction
+  (perfect for showing technique visually)
+Admin can add/remove/reorder steps.
+
+SECTION 4 — SAFETY INFORMATION (admin editable)
+- Hazard cards (icon, title, description)
+- PPE requirements
+- First aid instructions
+All editable, photos optional per card.
+
+SECTION 5 — TECHNICAL SPECS (admin editable)
+Key-value table — admin can add/edit/remove rows.
+
+IMAGE STORAGE:
+Use Supabase Storage bucket for all uploaded images.
+Images served via Supabase CDN URL.
+Compress images on upload (max 2MB).
+Show upload progress indicator.
+Preview image before saving.
+
+═══════════════════════════════════════
+QR CODE SCAN TRACKING
+═══════════════════════════════════════
+
+When QR code is scanned and page loads:
+Silently capture:
+1. Timestamp
+2. Geolocation — request browser permission
+   - If granted: lat/lng → reverse geocode 
+     to city/region (use ipapi.co)
+   - If denied: IP-based location via 
+     https://ipapi.co/json/
+3. Device type (mobile/tablet/desktop)
+4. User agent
+5. Batch ID from URL parameter:
+   ?batch=BSW-2024-001&unit=PKG-0042
+
+Supabase table: qr_scans
+Fields: id, timestamp, lat, lng, city, 
+region, country, device_type, user_agent, 
+batch_id, unit_id, ip_address
+
+ADMIN SCAN DASHBOARD at /admin/scans:
+- Password protected (env variable)
+- Table: all scans with filters
+- Date range filter
+- Batch filter  
+- Location filter
+- Interactive map (Leaflet.js) — 
+  orange dots on scan locations
+- Summary stats:
+  Total scans | Unique locations | 
+  Most active region | Scans today
+- Line chart: scans per day (last 30 days)
+- Export to CSV button
+
+═══════════════════════════════════════
+PUBLIC PAGE SECTIONS
+═══════════════════════════════════════
+
+All content driven by admin CMS — 
+no hardcoded text anywhere on public page.
+
+HERO:
+- KK-FIX wordmark (orange, Barlow Condensed)
+- "by BOSWORTH" 
+- Product name + subtitle from CMS
+- Hero image from CMS (full bleed background)
+- Badge chips from CMS
+- Key specs row
+- Two CTAs: "VIEW INSTRUCTIONS ↓" + "BUILD YOUR KIT →"
+
+INTERACTIVE STEP CHECKLIST:
+- Each step expandable (accordion)
+- Step photo/diagram shows when expanded
+- "MARK COMPLETE ✓" button per step
+- Progress bar: "3 of 8 steps complete"
+- Steps load from CMS — fully dynamic
+
+KIT BUILDER TOOL:
+Full 4-step guided tool:
+Step 1: Damage type (visual cards)
+Step 2: Belt width (dropdown)
+Step 3: Damage area (slider)
+Step 4: Surface condition (chips)
+Output: Kit recommendation + download PDF
+PDF branded with KK-Fix / Bosworth identity
+
+SAFETY SECTION:
+Hazards + PPE + First Aid
+All from CMS, with optional photos
+
+TECHNICAL SPECS:
+Dark monospace table, all from CMS
+
+FOOTER:
+KK-Fix logo + Bosworth branding
+Certifications + contact details
+
+═══════════════════════════════════════
+ANIMATIONS
+═══════════════════════════════════════
+
+- Framer Motion throughout
+- Steps: smooth accordion expand/collapse
+- Complete checkmark: satisfying green 
+  animation when step marked done
+- Progress bar: smooth fill animation
+- Kit builder: slide transitions between steps
+- Hero: subtle orange grain/particle texture
+- Scroll reveals: fade up staggered
+
+═══════════════════════════════════════
+TECH STACK
+═══════════════════════════════════════
+
+- Next.js 14 App Router (keep existing)
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Supabase (database + storage + auth)
+- Leaflet.js (admin scan map)
+- jsPDF (kit builder PDF)
+- Barlow Condensed + Inter + JetBrains Mono
+- Deploy: Vercel (migrate from Netlify)
+
+═══════════════════════════════════════
+ENVIRONMENT VARIABLES
+═══════════════════════════════════════
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+ADMIN_PASSWORD=
+NEXT_PUBLIC_SITE_URL=
+
+═══════════════════════════════════════
+IMPORTANT RULES
+═══════════════════════════════════════
+
+1. READ existing code FIRST before touching anything
+2. Preserve ALL existing admin functionality
+3. Preserve existing database data/schema
+4. Every piece of public text must come from CMS
+5. No hardcoded content on public page
+6. Mobile-first — test every section at 375px
+7. Image uploads must work on Vercel 
+   (use Supabase storage, not local filesystem)
+8. Admin must be intuitive — 
+   client is NOT a developer
+9. Push to GitHub, deploy to Vercel when complete

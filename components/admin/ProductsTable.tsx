@@ -72,7 +72,7 @@ export default function ProductsTable({ initialProducts }: ProductsTableProps) {
         disabled={loadingId === product.id}
         title="Delete"
         className="p-1.5 rounded transition-colors"
-        style={{ color: '#C8102E' }}
+        style={{ color: '#E8650A' }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(200,16,46,0.1)' }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
         <Trash2 size={14} />

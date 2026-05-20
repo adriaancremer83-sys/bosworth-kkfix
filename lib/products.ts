@@ -1,5 +1,5 @@
 import { createClient } from './supabase'
-import type { Product, Instruction, KitContent, SafetyItem } from './types'
+import type { Product, Instruction, KitContent, SafetyItem, TechSpec } from './types'
 
 export async function createProduct(productData: Partial<Product>): Promise<Product> {
   const supabase = createClient()
@@ -59,6 +59,7 @@ export async function upsertKitContents(
       item_name: item.item_name ?? '',
       item_description: item.item_description ?? null,
       quantity: item.quantity ?? null,
+      image_url: item.image_url ?? null,
       sort_order: idx,
     }))
   )
@@ -87,6 +88,7 @@ export async function upsertInstructions(
       description: inst.description ?? '',
       warning: inst.warning ?? null,
       image_url: inst.image_url ?? null,
+      estimated_time: inst.estimated_time ?? null,
     }))
   )
   if (error) throw new Error(error.message)
@@ -113,6 +115,32 @@ export async function upsertSafetyItems(
       label: item.label ?? '',
       description: item.description ?? null,
       type: item.type ?? 'warning',
+      sort_order: idx,
+    }))
+  )
+  if (error) throw new Error(error.message)
+}
+
+export async function upsertTechSpecs(
+  productId: string,
+  specs: Partial<TechSpec>[]
+): Promise<void> {
+  const supabase = createClient()
+
+  const { error: deleteError } = await supabase
+    .from('tech_specs')
+    .delete()
+    .eq('product_id', productId)
+  if (deleteError) throw new Error(deleteError.message)
+
+  const filtered = specs.filter(s => s.key?.trim() && s.value?.trim())
+  if (filtered.length === 0) return
+
+  const { error } = await supabase.from('tech_specs').insert(
+    filtered.map((spec, idx) => ({
+      product_id: productId,
+      key: spec.key ?? '',
+      value: spec.value ?? '',
       sort_order: idx,
     }))
   )

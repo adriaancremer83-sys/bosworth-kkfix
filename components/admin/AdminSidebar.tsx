@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Package, PlusCircle, QrCode, LogOut, ArrowLeft } from 'lucide-react'
-import { createClient } from '@/lib/supabase'
+import { LayoutDashboard, Package, PlusCircle, QrCode, ScanLine, LogOut, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
 
 interface AdminSidebarProps {
   userEmail: string | undefined
@@ -11,82 +11,95 @@ interface AdminSidebarProps {
 }
 
 const navLinks = [
-  { href: '/admin/products', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/admin/products', icon: Package, label: 'Products' },
-  { href: '/admin/products/new', icon: PlusCircle, label: 'Add Product' },
-  { href: '/admin/qr', icon: QrCode, label: 'QR Generator' },
+  { href: '/admin/products', icon: LayoutDashboard, label: 'Dashboard',      exact: true },
+  { href: '/admin/products', icon: Package,         label: 'Products',        exact: true },
+  { href: '/admin/products/new', icon: PlusCircle,  label: 'Add Product',     exact: false },
+  { href: '/admin/qr',       icon: QrCode,          label: 'QR Generator',    exact: false },
+  { href: '/admin/scans',    icon: ScanLine,        label: 'Scan Dashboard',  exact: false },
 ]
+
+const ORANGE = '#E8650A'
 
 export default function AdminSidebar({ userEmail, onClose }: AdminSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const supabase = createClient()
 
   async function handleLogout() {
-    await supabase.auth.signOut()
+    await fetch('/api/admin/logout', { method: 'POST' })
     router.push('/admin/login')
     router.refresh()
   }
 
+  function isActive(href: string, exact: boolean) {
+    if (exact) return pathname === href
+    return pathname.startsWith(href)
+  }
+
   return (
     <aside className="h-full w-[260px] flex flex-col"
-      style={{ background: '#0A0A0A', borderRight: '1px solid #383838' }}>
+      style={{ background: '#0A0A0A', borderRight: '1px solid #1e1e1e' }}>
       <div className="p-6 pb-4">
-        <p className="font-display text-2xl tracking-widest" style={{ color: '#C8102E' }}>BOSWORTH</p>
-        <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: '#8A8A8A', fontFamily: 'DM Sans, sans-serif' }}>
+        <div style={{ position: 'relative', height: '28px', width: '120px', marginBottom: '4px' }}>
+          <Image
+            src="/images/bosworth-logo-new.png"
+            alt="Bosworth"
+            fill
+            style={{ objectFit: 'contain', objectPosition: 'left center' }}
+            priority
+          />
+        </div>
+        <p style={{ fontSize: '10px', letterSpacing: '3px', textTransform: 'uppercase', color: '#555', marginTop: '4px' }}>
           Admin Portal
         </p>
-        <div className="mt-4 h-px" style={{ background: '#C8102E', opacity: 0.5 }} />
+        <div className="mt-4 h-px" style={{ background: ORANGE, opacity: 0.4 }} />
       </div>
 
       <nav className="flex-1 px-3 py-2">
-        {navLinks.map(({ href, icon: Icon, label }) => {
-          const isActive = pathname === href || (href !== '/admin/products' && pathname.startsWith(href))
+        {navLinks.map(({ href, icon: Icon, label, exact }) => {
+          const active = isActive(href, exact)
           return (
             <Link
               key={`${href}-${label}`}
               href={href}
               onClick={onClose}
-              className="flex items-center gap-3 px-3 py-2.5 rounded mb-1 text-sm font-medium transition-all"
+              className="flex items-center gap-3 px-3 py-2.5 mb-0.5 text-sm font-medium transition-all"
               style={{
-                color: isActive ? '#C8102E' : '#8A8A8A',
-                background: isActive ? 'rgba(200,16,46,0.08)' : 'transparent',
-                borderLeft: isActive ? '3px solid #C8102E' : '3px solid transparent',
+                color: active ? ORANGE : '#8A8A8A',
+                background: active ? 'rgba(232,101,10,0.08)' : 'transparent',
+                borderLeft: `3px solid ${active ? ORANGE : 'transparent'}`,
+                textDecoration: 'none',
+                display: 'flex',
               }}
-              onMouseEnter={(e) => {
-                if (!isActive) e.currentTarget.style.background = '#1C1C1C'
-              }}
-              onMouseLeave={(e) => {
-                if (!isActive) e.currentTarget.style.background = 'transparent'
-              }}>
-              <Icon size={16} />
+              onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#111' }}
+              onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}>
+              <Icon size={15} />
               {label}
             </Link>
           )
         })}
       </nav>
 
-      <div className="p-4 mt-auto" style={{ borderTop: '1px solid #1C1C1C' }}>
+      <div className="p-4 mt-auto" style={{ borderTop: '1px solid #111' }}>
         {userEmail && (
-          <p className="text-xs mb-3 truncate" style={{ color: '#8A8A8A' }}>{userEmail}</p>
+          <p className="text-xs mb-3 truncate" style={{ color: '#555' }}>{userEmail}</p>
         )}
         <Link
           href="/products/kk-fix"
           onClick={onClose}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded text-sm mb-1"
-          style={{ color: '#8A8A8A', background: 'transparent' }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#F5F5F0'; e.currentTarget.style.background = '#1C1C1C' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = '#8A8A8A'; e.currentTarget.style.background = 'transparent' }}>
-          <ArrowLeft size={14} />
-          Back to Site
+          className="flex items-center gap-2 w-full px-3 py-2 mb-1 text-sm"
+          style={{ color: '#8A8A8A', background: 'transparent', textDecoration: 'none', display: 'flex' }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#f0f0f0'; e.currentTarget.style.background = '#111' }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#8A8A8A'; e.currentTarget.style.background = 'transparent' }}>
+          <ArrowLeft size={13} />
+          View Site
         </Link>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded text-sm transition-colors"
-          style={{ color: '#8A8A8A', background: 'transparent' }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#C8102E' }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = '#8A8A8A' }}>
-          <LogOut size={14} />
+          className="flex items-center gap-2 w-full px-3 py-2 text-sm transition-colors"
+          style={{ color: '#8A8A8A', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+          onMouseEnter={e => { e.currentTarget.style.color = ORANGE }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#8A8A8A' }}>
+          <LogOut size={13} />
           Sign Out
         </button>
       </div>

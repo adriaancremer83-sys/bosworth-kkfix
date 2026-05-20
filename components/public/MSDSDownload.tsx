@@ -9,27 +9,30 @@ interface MSDSDownloadProps {
 
 export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
   return (
-    <section style={{ background: '#111111', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
+    <section style={{ background: '#111111', borderTop: '1px solid #1e1e1e', padding: 'clamp(40px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '32px' }}>
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.4 }}>
-          <h2 className="font-display" style={{ fontSize: '36px', color: '#FFFFFF', lineHeight: 1 }}>
-            Material Safety Data Sheet
+          <p style={{ fontSize: '11px', color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px', fontWeight: 500 }}>
+            Documentation
+          </p>
+          <h2 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1 }}>
+            Safety Data Sheet
           </h2>
-          <p style={{ fontSize: '14px', fontWeight: 300, color: '#888888', marginTop: '8px' }}>
+          <p style={{ fontSize: '13px', color: '#555', marginTop: '8px' }}>
             Version 2 — Mercury Free — November 2025
           </p>
-          <p style={{ fontSize: '12px', fontWeight: 300, color: '#666666', marginTop: '4px' }}>
+          <p style={{ fontSize: '12px', color: '#444', marginTop: '4px' }}>
             Prepared by A. Pieterse | Approved by L. van der Vyver
           </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.4, delay: 0.1 }}
           style={{ flexShrink: 0 }}>
@@ -43,24 +46,23 @@ export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: '#C8102E',
-                color: '#FFFFFF',
-                fontSize: '18px',
-                letterSpacing: '1px',
+                background: '#E8650A',
+                color: '#fff',
+                fontSize: '17px',
+                letterSpacing: '2px',
                 padding: '16px 40px',
-                borderRadius: '4px',
                 textDecoration: 'none',
                 transition: 'background 150ms',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#A50D24' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#C8102E' }}>
-              <Download size={18} />
+              onMouseEnter={e => { e.currentTarget.style.background = '#C4530A' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#E8650A' }}>
+              <Download size={16} />
               Download SDS
             </a>
           ) : (
             <div style={{ textAlign: 'right' }}>
-              <p style={{ fontSize: '13px', color: '#888888', marginBottom: '6px' }}>Contact Bosworth for SDS document</p>
-              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#C8102E', fontSize: '14px' }}>
+              <p style={{ fontSize: '13px', color: '#555', marginBottom: '6px' }}>Contact Bosworth for SDS document</p>
+              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#E8650A', fontSize: '14px', textDecoration: 'none' }}>
                 pulleys@bosworth.co.za
               </a>
             </div>

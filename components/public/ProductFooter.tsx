@@ -1,20 +1,32 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function ProductFooter() {
   return (
-    <footer style={{ background: '#0A0A0A', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px) clamp(24px, 4vw, 40px)' }}>
+    <footer style={{ background: '#0a0a0a', borderTop: '1px solid #1a1a1a', padding: 'clamp(40px, 6vw, 60px) clamp(24px, 6vw, 80px) clamp(24px, 4vw, 40px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <h2 className="font-display" style={{ fontSize: '48px', color: '#FFFFFF', lineHeight: 1 }}>
-          BOSWORTH
-        </h2>
-        <div style={{ height: '3px', background: '#C8102E', margin: '24px 0' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+          <div style={{ position: 'relative', height: '32px', width: '140px' }}>
+            <Image
+              src="/images/bosworth-logo-new.png"
+              alt="Bosworth"
+              fill
+              style={{ objectFit: 'contain', objectPosition: 'left center' }}
+            />
+          </div>
+          <div style={{ height: '1px', flex: 1, background: '#1a1a1a' }} />
+          <span className="font-display" style={{ fontSize: '14px', color: '#E8650A', letterSpacing: '3px' }}>KK-FIX</span>
+        </div>
+
+        <div style={{ height: '2px', background: '#E8650A', margin: '20px 0 32px 0', maxWidth: '120px' }} />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '40px' }}>
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Address
             </p>
-            <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
+            <p style={{ fontSize: '13px', color: '#555', lineHeight: 1.9 }}>
               21 Vereeniging Rd<br />
               Alrode<br />
               South Africa
@@ -22,25 +34,25 @@ export default function ProductFooter() {
           </div>
 
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Contact
             </p>
-            <p style={{ fontSize: '14px', lineHeight: 1.8 }}>
-              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#888888', textDecoration: 'none' }}>
+            <p style={{ fontSize: '13px', lineHeight: 1.9 }}>
+              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#555', textDecoration: 'none' }}>
                 pulleys@bosworth.co.za
               </a>
               <br />
-              <a href="tel:+27118641643" style={{ color: '#888888', textDecoration: 'none' }}>
+              <a href="tel:+27118641643" style={{ color: '#555', textDecoration: 'none' }}>
                 +27 11 864 1643
               </a>
             </p>
           </div>
 
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Certifications
             </p>
-            <p style={{ fontSize: '14px', color: '#888888', lineHeight: 1.8 }}>
+            <p className="font-mono-tech" style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}>
               ISO 9001:2015<br />
               ISO 14001:2015<br />
               ISO 45001:2015<br />
@@ -50,7 +62,7 @@ export default function ProductFooter() {
         </div>
 
         <div style={{
-          borderTop: '1px solid #222222',
+          borderTop: '1px solid #1a1a1a',
           paddingTop: '24px',
           display: 'flex',
           flexWrap: 'wrap',
@@ -58,19 +70,17 @@ export default function ProductFooter() {
           alignItems: 'center',
           gap: '12px',
         }}>
-          <p style={{ fontSize: '12px', color: '#555555' }}>
+          <p style={{ fontSize: '11px', color: '#333' }}>
             © 2025 Bosworth — A Division of Hudaco Trading Ltd.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <p style={{ fontSize: '12px', color: '#555555' }}>
-              Part of the Hudaco Group
-            </p>
-            <span style={{ fontSize: '12px', color: '#333333' }}>·</span>
+            <p style={{ fontSize: '11px', color: '#333' }}>Part of the Hudaco Group</p>
+            <span style={{ fontSize: '11px', color: '#222' }}>·</span>
             <a
               href="/admin/products"
-              style={{ fontSize: '11px', fontWeight: 400, color: '#333333', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#C8102E' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#333333' }}>
+              style={{ fontSize: '11px', color: '#333', textDecoration: 'none', transition: 'color 150ms' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#E8650A' }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#333' }}>
               Admin
             </a>
           </div>

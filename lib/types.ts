@@ -3,9 +3,15 @@ export interface Product {
   name: string
   slug: string
   tagline: string | null
+  subtitle: string | null
   description: string | null
   category: string | null
   part_number: string | null
+  version: string | null
+  badges: string[] | null
+  hero_image_url: string | null
+  product_image_url: string | null
+  gallery_images: string[] | null
   video_url: string | null
   msds_url: string | null
   image_url: string | null
@@ -22,6 +28,7 @@ export interface Instruction {
   description: string
   warning: string | null
   image_url: string | null
+  estimated_time: string | null
   created_at: string
 }
 
@@ -42,6 +49,16 @@ export interface KitContent {
   item_name: string
   item_description: string | null
   quantity: string | null
+  image_url: string | null
+  sort_order: number
+  created_at: string
+}
+
+export interface TechSpec {
+  id: string
+  product_id: string
+  key: string
+  value: string
   sort_order: number
   created_at: string
 }
@@ -50,4 +67,5 @@ export interface ProductWithRelations extends Product {
   instructions: Instruction[]
   safety_items: SafetyItem[]
   kit_contents: KitContent[]
+  tech_specs: TechSpec[]
 }

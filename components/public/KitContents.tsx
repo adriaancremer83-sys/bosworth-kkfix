@@ -26,53 +26,45 @@ function getIcon(name: string) {
 
 export default function KitContents({ items }: KitContentsProps) {
   return (
-    <section style={{ background: '#FFFFFF', padding: 'clamp(24px, 6vw, 80px)' }}>
+    <section id="kit-contents" style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.4 }}
-          style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '8px' }}>
+          transition={{ duration: 0.4 }}>
           <p style={{
-            fontSize: '12px',
+            fontSize: '11px',
             fontWeight: 500,
-            color: '#C8102E',
+            color: '#E8650A',
             textTransform: 'uppercase',
             letterSpacing: '3px',
+            marginBottom: '8px',
           }}>
             Kit Contents
           </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
+              What&apos;s in the Box
+            </h2>
+            <span
+              className="font-display"
+              style={{
+                background: '#E8650A',
+                color: '#fff',
+                fontSize: '20px',
+                padding: '2px 10px',
+              }}>
+              {items.length}
+            </span>
+          </div>
+          <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 40px 0' }} />
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.4 }}
-          style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <h2 className="font-display" style={{ fontSize: '56px', color: '#111111', lineHeight: 1 }}>
-            What&apos;s in the Box
-          </h2>
-          <span
-            className="font-display"
-            style={{
-              background: '#C8102E',
-              color: '#FFFFFF',
-              fontSize: '20px',
-              padding: '2px 10px',
-              borderRadius: '2px',
-            }}>
-            {items.length}
-          </span>
-        </motion.div>
-
-        <div style={{ width: '60px', height: '3px', background: '#C8102E', margin: '16px 0 40px 0' }} />
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-          gap: '16px',
+          gap: '12px',
         }}>
           {items.map((item, i) => {
             const Icon = getIcon(item.item_name)
@@ -82,46 +74,53 @@ export default function KitContents({ items }: KitContentsProps) {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
+                transition={{ duration: 0.4, delay: i * 0.07 }}
                 style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #E8E8E8',
-                  borderTop: '3px solid #C8102E',
+                  background: '#1a1a1a',
+                  border: '1px solid #2a2a2a',
+                  borderTop: '3px solid #E8650A',
                   padding: '24px',
-                  borderRadius: '4px',
                   position: 'relative',
+                  transition: 'transform 150ms, box-shadow 150ms, border-color 150ms',
                   cursor: 'default',
-                  transition: 'transform 150ms, box-shadow 150ms',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-3px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,101,10,0.12)'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.transform = 'translateY(0)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}>
+                {(item as any).image_url ? (
+                  <img
+                    src={(item as any).image_url}
+                    alt={item.item_name}
+                    style={{ width: '100%', height: '80px', objectFit: 'contain', marginBottom: '12px' }}
+                  />
+                ) : (
+                  <Icon size={22} style={{ color: '#E8650A' }} />
+                )}
+
                 <span
                   className="font-display"
                   style={{
                     position: 'absolute',
                     top: '12px',
-                    right: '16px',
-                    fontSize: '48px',
-                    color: '#E8E8E8',
+                    right: '14px',
+                    fontSize: '40px',
+                    color: '#2a2a2a',
                     lineHeight: 1,
                     userSelect: 'none',
                   }}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
 
-                <Icon size={24} style={{ color: '#C8102E' }} />
-
-                <p style={{ fontSize: '15px', fontWeight: 600, color: '#111111', marginTop: '12px' }}>
+                <p style={{ fontSize: '14px', fontWeight: 600, color: '#f0f0f0', marginTop: '12px' }}>
                   {item.item_name}
                 </p>
                 {item.item_description && (
-                  <p style={{ fontSize: '13px', fontWeight: 400, color: '#666666', marginTop: '4px' }}>
+                  <p style={{ fontSize: '12px', color: '#8a9ab0', marginTop: '4px', lineHeight: 1.5 }}>
                     {item.item_description}
                   </p>
                 )}
@@ -130,11 +129,11 @@ export default function KitContents({ items }: KitContentsProps) {
                     display: 'inline-block',
                     marginTop: '12px',
                     fontSize: '11px',
-                    fontWeight: 500,
-                    color: '#C8102E',
-                    background: '#FFF0F0',
+                    fontWeight: 600,
+                    color: '#E8650A',
+                    background: 'rgba(232,101,10,0.1)',
                     padding: '2px 8px',
-                    borderRadius: '2px',
+                    letterSpacing: '0.5px',
                   }}>
                     {item.quantity}
                   </span>

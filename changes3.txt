@@ -1,0 +1,26 @@
+Fix two critical issues:
+
+ISSUE 1 - MOBILE LAYOUT:
+The public product page is broken on mobile (375px screens).
+Fix these specific mobile problems:
+- Hero: "KK-FIX" text is too large and breaking across lines 
+  on mobile. On screens under 640px, cap font-size at 100px max.
+- Hero badges: stack vertically on mobile, full width each
+- Safety section: change from 2 columns to 1 column on mobile
+- Footer: stack all columns vertically on mobile, 
+  address text wrapping word by word - fix with proper width
+- First Aid cards: 1 column on mobile, not horizontal scroll
+- Kit contents: already 2 col on mobile, that's fine
+- General: add padding: 24px on all sections for mobile 
+  (currently too tight at screen edges)
+
+ISSUE 2 - ADMIN BYPASS NOT WORKING ON NETLIFY:
+The login bypass only works locally because middleware.ts is 
+blocking access on Netlify before reaching the login page.
+
+For the demo, update middleware.ts to completely disable all 
+authentication checking. Make it just call NextResponse.next() 
+for ALL routes including /admin/* without any Supabase session 
+checks. This allows anyone to access admin for the demo.
+
+We will re-enable auth before client handoff.

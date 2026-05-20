@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from './supabase-server'
-import type { Product, Instruction, KitContent, SafetyItem, ProductWithRelations } from './types'
+import type { Product, Instruction, KitContent, SafetyItem, TechSpec, ProductWithRelations } from './types'
 
 export async function getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
   try {
@@ -10,7 +10,8 @@ export async function getProductBySlug(slug: string): Promise<ProductWithRelatio
         *,
         instructions (*),
         safety_items (*),
-        kit_contents (*)
+        kit_contents (*),
+        tech_specs (*)
       `)
       .eq('slug', slug)
       .eq('is_active', true)
@@ -23,6 +24,7 @@ export async function getProductBySlug(slug: string): Promise<ProductWithRelatio
       instructions: (data.instructions as Instruction[]).sort((a, b) => a.step_number - b.step_number),
       safety_items: (data.safety_items as SafetyItem[]).sort((a, b) => a.sort_order - b.sort_order),
       kit_contents: (data.kit_contents as KitContent[]).sort((a, b) => a.sort_order - b.sort_order),
+      tech_specs: ((data.tech_specs ?? []) as TechSpec[]).sort((a, b) => a.sort_order - b.sort_order),
     } as ProductWithRelations
   } catch {
     return null

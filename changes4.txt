@@ -1,0 +1,28 @@
+Fix the admin panel for mobile screens (375px):
+
+1. SIDEBAR: On mobile, hide the sidebar completely. Add a 
+   hamburger menu button (☰) in the top left of the admin 
+   header bar. Clicking it slides the sidebar in from the left 
+   as an overlay with a dark backdrop. Clicking backdrop closes it.
+
+2. PRODUCTS TABLE: On mobile replace the table with cards.
+   Each product becomes a card showing:
+   - Product name (large, bold)
+   - Part number + Category on one line
+   - Active/Inactive badge
+   - Action icons in a row at the bottom
+   Hide the table on mobile, show cards. On desktop keep table.
+
+3. ADMIN HEADER: On mobile reduce padding, make "Add New Product" 
+   button show only a "+" icon on mobile, full text on desktop.
+
+4. GENERAL ADMIN: Add proper padding 16px on mobile for all 
+   admin pages. Nothing should touch screen edges.
+
+5. QR GENERATOR: Stack the two columns vertically on mobile.
+   Settings on top, preview below.
+
+6. PRODUCT FORM TABS: On mobile make tab labels shorter or 
+   allow horizontal scroll on the tab bar.
+
+After fixing, push to GitHub so Netlify auto-deploys.

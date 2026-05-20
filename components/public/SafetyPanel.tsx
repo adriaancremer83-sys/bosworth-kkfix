@@ -26,11 +26,11 @@ function getIcon(iconName: string, type: SafetyItem['type']) {
   return AlertTriangle
 }
 
-const typeStyles: Record<SafetyItem['type'], { bg: string; leftBorder: string; iconColor: string }> = {
-  hazard:  { bg: '#FFF5F5', leftBorder: '#C8102E', iconColor: '#C8102E' },
-  ppe:     { bg: '#EFF6FF', leftBorder: '#1D4ED8', iconColor: '#1D4ED8' },
-  warning: { bg: '#FFFBEB', leftBorder: '#D97706', iconColor: '#D97706' },
-  disposal:{ bg: '#F0FDF4', leftBorder: '#16A34A', iconColor: '#16A34A' },
+const typeStyles: Record<SafetyItem['type'], { bg: string; border: string; iconColor: string }> = {
+  hazard:  { bg: 'rgba(232,101,10,0.06)', border: '#E8650A', iconColor: '#E8650A' },
+  ppe:     { bg: 'rgba(29,78,216,0.06)',  border: '#3b82f6', iconColor: '#3b82f6' },
+  warning: { bg: 'rgba(245,158,11,0.06)', border: '#f59e0b', iconColor: '#f59e0b' },
+  disposal:{ bg: 'rgba(34,197,94,0.06)',  border: '#22c55e', iconColor: '#22c55e' },
 }
 
 function SafetyCard({ item, index }: { item: SafetyItem; index: number }) {
@@ -38,25 +38,24 @@ function SafetyCard({ item, index }: { item: SafetyItem; index: number }) {
   const s = typeStyles[item.type]
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
+      transition={{ duration: 0.35, delay: index * 0.07 }}
       style={{
         background: s.bg,
-        borderLeft: `3px solid ${s.leftBorder}`,
-        borderRadius: '4px',
-        padding: '20px 24px',
-        marginBottom: '12px',
+        borderLeft: `3px solid ${s.border}`,
+        padding: '18px 20px',
+        marginBottom: '10px',
         display: 'flex',
-        gap: '16px',
+        gap: '14px',
         alignItems: 'flex-start',
       }}>
-      <Icon size={20} style={{ color: s.iconColor, flexShrink: 0, marginTop: '2px' }} />
+      <Icon size={18} style={{ color: s.iconColor, flexShrink: 0, marginTop: '2px' }} />
       <div>
-        <p style={{ fontSize: '14px', fontWeight: 600, color: '#111111' }}>{item.label}</p>
+        <p style={{ fontSize: '14px', fontWeight: 600, color: '#f0f0f0' }}>{item.label}</p>
         {item.description && (
-          <p style={{ fontSize: '13px', fontWeight: 400, color: '#666666', marginTop: '2px' }}>
+          <p style={{ fontSize: '13px', color: '#8a9ab0', marginTop: '2px', lineHeight: 1.5 }}>
             {item.description}
           </p>
         )}
@@ -70,39 +69,39 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
   const ppeItems = items.filter(i => i.type === 'ppe' || i.type === 'disposal')
 
   const firstAid = [
-    { label: 'Skin',       action: 'Wash with soap and water for at least 15 minutes.',  icon: '🖐' },
+    { label: 'Skin',       action: 'Wash with soap and water for at least 15 minutes.',          icon: '🖐' },
     { label: 'Eyes',       action: 'Rinse with clean water for 15 minutes. Seek medical attention.', icon: '👁' },
-    { label: 'Inhalation', action: 'Move to fresh air immediately. Rest and keep warm.',  icon: '💨' },
-    { label: 'Ingestion',  action: 'Do NOT induce vomiting. Seek immediate medical attention.', icon: '🚨' },
+    { label: 'Inhalation', action: 'Move to fresh air immediately. Rest and keep warm.',           icon: '💨' },
+    { label: 'Ingestion',  action: 'Do NOT induce vomiting. Seek immediate medical attention.',    icon: '🚨' },
   ]
 
   return (
     <>
-      <section style={{ background: '#FFFFFF', padding: 'clamp(24px, 6vw, 80px)' }}>
+      <section style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4 }}>
-            <p style={{ fontSize: '12px', fontWeight: 500, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Safety
             </p>
-            <h2 className="font-display" style={{ fontSize: '56px', color: '#111111', lineHeight: 1 }}>
+            <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
               Safety Information
             </h2>
-            <div style={{ width: '60px', height: '3px', background: '#C8102E', margin: '16px 0 40px 0' }} />
+            <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 40px 0' }} />
           </motion.div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
             <div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
                 Hazards &amp; Warnings
               </p>
               {hazardItems.map((item, i) => <SafetyCard key={item.id} item={item} index={i} />)}
             </div>
             <div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: '#1D4ED8', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 700, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
                 PPE &amp; Disposal
               </p>
               {ppeItems.map((item, i) => <SafetyCard key={item.id} item={item} index={i} />)}
@@ -111,37 +110,37 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
         </div>
       </section>
 
-      <section style={{ background: '#F4F4F4', padding: 'clamp(24px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
+      <section style={{ background: '#0a0a0a', padding: 'clamp(40px, 6vw, 60px) clamp(24px, 6vw, 80px)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4 }}>
-            <p style={{ fontSize: '12px', fontWeight: 500, color: '#C8102E', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Emergency
             </p>
-            <h3 className="font-display" style={{ fontSize: '40px', color: '#111111', marginBottom: '32px' }}>
+            <h3 className="font-display" style={{ fontSize: 'clamp(32px, 4vw, 44px)', color: '#f0f0f0', marginBottom: '32px' }}>
               First Aid
             </h3>
           </motion.div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
             {firstAid.map((fa, i) => (
               <motion.div
                 key={fa.label}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
                 style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #E8E8E8',
+                  background: '#111111',
+                  border: '1px solid #1e1e1e',
                   padding: '20px',
-                  borderRadius: '4px',
                 }}>
-                <div style={{ fontSize: '24px', marginBottom: '12px' }}>{fa.icon}</div>
-                <p style={{ fontSize: '14px', fontWeight: 600, color: '#111111', marginBottom: '6px' }}>{fa.label}</p>
-                <p style={{ fontSize: '13px', fontWeight: 400, color: '#666666', lineHeight: 1.5 }}>{fa.action}</p>
+                <div style={{ fontSize: '22px', marginBottom: '12px' }}>{fa.icon}</div>
+                <p style={{ fontSize: '13px', fontWeight: 700, color: '#f0f0f0', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '1px' }}>{fa.label}</p>
+                <p style={{ fontSize: '13px', color: '#8a9ab0', lineHeight: 1.55 }}>{fa.action}</p>
               </motion.div>
             ))}
           </div>
