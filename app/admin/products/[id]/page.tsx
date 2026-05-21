@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createServiceSupabaseClient } from '@/lib/supabase-server'
 import ProductForm from '@/components/admin/ProductForm'
 import type { ProductWithRelations, Instruction, SafetyItem, KitContent } from '@/lib/types'
 
@@ -9,7 +9,7 @@ interface PageProps {
 
 async function getProductById(id: string): Promise<ProductWithRelations | null> {
   try {
-    const supabase = await createServerSupabaseClient()
+    const supabase = createServiceSupabaseClient()
     const { data, error } = await supabase
       .from('products')
       .select('*, instructions(*), safety_items(*), kit_contents(*)')
