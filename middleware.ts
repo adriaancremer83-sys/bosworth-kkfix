@@ -14,8 +14,8 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-pathname', pathname)
 
-  // Only gate /admin/* routes; skip the login page itself and API auth routes
-  const isAdminRoute = pathname.startsWith('/admin')
+  // Gate /admin/* UI routes and /api/admin/* API routes
+  const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
   const isPublicAdminPath = pathname === '/admin/login'
 
   if (isAdminRoute && !isPublicAdminPath) {
@@ -39,5 +39,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }

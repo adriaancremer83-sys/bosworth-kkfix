@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import { createClient } from '@/lib/supabase'
 import ScanErrorBoundary from '@/components/admin/ScanErrorBoundary'
 import {
   MapPin, Monitor, Smartphone, Tablet,
@@ -121,14 +120,16 @@ export default function ScansPage() {
 
   async function load() {
     setLoading(true)
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('qr_scans')
-      .select('*')
-      .order('timestamp', { ascending: false })
-      .limit(1000)
-    setScans((data ?? []) as Scan[])
-    setLoading(false)
+    try {
+      const res = await fetch('/api/admin/scans')
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      setScans(data as Scan[])
+    } catch (err) {
+      console.error('[scans page] load error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
