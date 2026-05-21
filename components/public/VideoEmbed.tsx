@@ -7,6 +7,16 @@ interface VideoEmbedProps {
   videoUrl: string | null
 }
 
+// Accept watch URLs, short URLs, or already-correct embed URLs
+function toEmbedUrl(url: string): string {
+  if (url.includes('youtube.com/embed/')) return url
+  const watchMatch = url.match(/[?&]v=([^&]+)/)
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`
+  const shortMatch = url.match(/youtu\.be\/([^?&]+)/)
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`
+  return url
+}
+
 export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
   return (
     <section style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
@@ -24,7 +34,7 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
             letterSpacing: '3px',
             marginBottom: '8px',
           }}>
-            How to Use
+            How It Works
           </p>
           <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
             KK-FIX Application Guide
@@ -46,7 +56,7 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
           }}>
           {videoUrl ? (
             <iframe
-              src={videoUrl}
+              src={toEmbedUrl(videoUrl)}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

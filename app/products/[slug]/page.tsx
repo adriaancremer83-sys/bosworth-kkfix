@@ -12,6 +12,7 @@ import KitBuilder from '@/components/public/KitBuilder'
 import MSDSDownload from '@/components/public/MSDSDownload'
 import ProductFooter from '@/components/public/ProductFooter'
 import QRScanTracker from '@/components/public/QRScanTracker'
+import HeroImage from '@/components/public/HeroImage'
 
 interface PageProps {
   params: { slug: string }
@@ -64,6 +65,7 @@ export default async function ProductPage({ params }: PageProps) {
         <QRScanTracker productId={product.id} />
       </Suspense>
       <Navbar productName={product.name} msdsUrl={product.msds_url} />
+      <HeroImage />
       <ProductHero product={product} />
       <VideoEmbed videoUrl={product.video_url} />
       <KitContents items={product.kit_contents} />
