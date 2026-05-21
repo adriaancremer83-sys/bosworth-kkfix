@@ -28,6 +28,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function ComingSoon() {
   return (
     <main style={{ background: '#0A0A0A', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Suspense fallback={null}>
+        <QRScanTracker productId={null} />
+      </Suspense>
       <Navbar productName="KK-Fix" msdsUrl={null} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', textAlign: 'center' }}>
         <div style={{ marginBottom: '24px' }}>

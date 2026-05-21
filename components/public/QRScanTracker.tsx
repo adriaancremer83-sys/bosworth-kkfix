@@ -9,7 +9,7 @@ function getDeviceType(ua: string): 'mobile' | 'tablet' | 'desktop' {
   return 'desktop'
 }
 
-export default function QRScanTracker({ productId }: { productId: string }) {
+export default function QRScanTracker({ productId }: { productId: string | null }) {
   const searchParams = useSearchParams()
 
   useEffect(() => {

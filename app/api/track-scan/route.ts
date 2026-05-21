@@ -10,6 +10,13 @@ export async function POST(request: Request) {
       batch_id, unit_id, ip_address, product_id,
     } = body
 
+    // Use client-reported IP; fall back to request headers when ipapi.co is unavailable
+    const serverIp =
+      request.headers.get('x-real-ip') ??
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+      null
+    const resolvedIp = (ip_address as string | null) ?? serverIp
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -26,13 +33,17 @@ export async function POST(request: Request) {
       user_agent: user_agent ?? null,
       batch_id: batch_id ?? null,
       unit_id: unit_id ?? null,
-      ip_address: ip_address ?? null,
-      product_id: product_id ?? null,
+      ip_address: resolvedIp,
+      product_id: (product_id as string | null) ?? null,
     })
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) {
+      console.error('[track-scan] insert error:', error.message, error.details)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (err) {
+    console.error('[track-scan] unexpected error:', err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })
   }
 }
