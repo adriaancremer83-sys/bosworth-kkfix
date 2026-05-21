@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
   // Gate /admin/* UI routes and /api/admin/* API routes
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
-  const isPublicAdminPath = pathname === '/admin/login'
+  const isPublicAdminPath = pathname === '/admin/login' || pathname === '/api/admin/login'
 
   if (isAdminRoute && !isPublicAdminPath) {
     const password = process.env.ADMIN_PASSWORD
