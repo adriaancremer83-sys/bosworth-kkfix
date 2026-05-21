@@ -128,9 +128,9 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
                       }}>
                       {step.title}
                     </h3>
-                    {(step as any).estimated_time && (
+                    {step.estimated_time && (
                       <span style={{ fontSize: '11px', color: '#555', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
-                        <Clock size={11} /> {(step as any).estimated_time}
+                        <Clock size={11} /> {step.estimated_time}
                       </span>
                     )}
                   </div>
