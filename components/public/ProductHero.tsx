@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import Image from 'next/image'
 import type { Product } from '@/lib/types'
 
 interface ProductHeroProps {
@@ -23,7 +24,6 @@ export default function ProductHero({ product }: ProductHeroProps) {
   return (
     <section
       style={{
-        background: 'linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 100%)',
         paddingTop: '64px',
         minHeight: '100svh',
         display: 'flex',
@@ -31,34 +31,27 @@ export default function ProductHero({ product }: ProductHeroProps) {
         position: 'relative',
         overflow: 'hidden',
       }}>
-      {/* subtle grain overlay */}
+      {/* Hero background image */}
+      <Image
+        src="/images/hero.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        style={{ objectFit: 'cover', objectPosition: 'center' }}
+      />
+
+      {/* Dark overlay so text stays readable over the image */}
       <div
         aria-hidden
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.04\'/%3E%3C/svg%3E")',
-          backgroundSize: '200px',
-          pointerEvents: 'none',
-          opacity: 0.6,
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.75) 100%)',
         }}
       />
 
-      {/* orange glow top-left */}
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          top: '-100px',
-          left: '-100px',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(232,101,10,0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(40px, 6vw, 80px)', width: '100%', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: 'clamp(40px, 6vw, 80px)', width: '100%', position: 'relative', zIndex: 2 }}>
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
