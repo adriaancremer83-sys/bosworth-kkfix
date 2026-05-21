@@ -11,7 +11,6 @@ interface Selection {
   beltWidth:  string
   damageArea: number
   surface:    string[]
-  bags:       string
 }
 
 // ─── Step data ───────────────────────────────────────────────────────────────
@@ -38,12 +37,18 @@ const SURFACES = [
   { id: 'repaired', label: 'Previously Repaired' },
 ]
 
-const BAG_COUNTS = [
-  { value: '1',  label: 'bag' },
-  { value: '2',  label: 'bags' },
-  { value: '3',  label: 'bags' },
-  { value: '4+', label: 'bags' },
-]
+// ─── Bag quantity calculator ──────────────────────────────────────────────────
+
+function getRecommendedBags(s: Selection): string {
+  const isDelamination = s.damageType === 'delamination'
+  const multiSurface   = s.surface.length >= 3
+  const large          = s.damageArea >= 300
+
+  if ((large || isDelamination) && multiSurface) return '4+'
+  if (large || isDelamination)                   return '3'
+  if (s.damageArea >= 100)                       return '2'
+  return '1'
+}
 
 // ─── Recommendation engine ───────────────────────────────────────────────────
 
@@ -100,7 +105,7 @@ function getRecommendation(s: Selection): Recommendation {
 
 // ─── Order link builders ──────────────────────────────────────────────────────
 
-function buildWhatsAppUrl(sel: Selection, rec: Recommendation): string {
+function buildWhatsAppUrl(sel: Selection, rec: Recommendation, bags: string): string {
   const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
   const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
   const msg =
@@ -108,7 +113,7 @@ function buildWhatsAppUrl(sel: Selection, rec: Recommendation): string {
     `I'd like to order KK-Fix based on a Kit Builder assessment:\n\n` +
     `*Kit:* ${rec.kit}\n` +
     `*Grade:* ${rec.grade}\n` +
-    `*Quantity:* ${sel.bags} bag(s)\n\n` +
+    `*Recommended Quantity:* ${bags} bag(s)\n\n` +
     `*Damage Type:* ${damage}\n` +
     `*Belt Width:* ${sel.beltWidth}\n` +
     `*Damage Area:* ${sel.damageArea} cm²\n` +
@@ -117,7 +122,7 @@ function buildWhatsAppUrl(sel: Selection, rec: Recommendation): string {
   return `https://wa.me/27733701457?text=${encodeURIComponent(msg)}`
 }
 
-function buildEmailUrl(sel: Selection, rec: Recommendation): string {
+function buildEmailUrl(sel: Selection, rec: Recommendation, bags: string): string {
   const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
   const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
   const body =
@@ -125,7 +130,7 @@ function buildEmailUrl(sel: Selection, rec: Recommendation): string {
     `I would like to place an order for KK-Fix based on the following Kit Builder assessment:\n\n` +
     `Kit: ${rec.kit}\n` +
     `Grade: ${rec.grade}\n` +
-    `Quantity: ${sel.bags} bag(s)\n\n` +
+    `Recommended Quantity: ${bags} bag(s)\n\n` +
     `Assessment Details:\n` +
     `- Damage Type: ${damage}\n` +
     `- Belt Width: ${sel.beltWidth}\n` +
@@ -186,7 +191,7 @@ async function generatePDF(sel: Selection, rec: Recommendation) {
   row('Belt Width',  sel.beltWidth)
   row('Damage Area', `${sel.damageArea} cm²`)
   row('Surface',     sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean')
-  row('Quantity',    `${sel.bags} bag(s)`)
+  row('Recommended Qty', `${getRecommendedBags(sel)} bag(s)`)
   y += 4
 
   sectionHeader('RECOMMENDED KIT')
@@ -252,8 +257,8 @@ function answerCardStyle(selected: boolean): React.CSSProperties {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-const TOTAL_STEPS = 5
-const STEP_LABELS = ['Damage Type', 'Belt Width', 'Damage Area', 'Surface', 'Quantity']
+const TOTAL_STEPS = 4
+const STEP_LABELS = ['Damage Type', 'Belt Width', 'Damage Area', 'Surface']
 
 export default function KitBuilder() {
   const [step, setStep]      = useState(0)
@@ -266,7 +271,6 @@ export default function KitBuilder() {
     beltWidth:  '',
     damageArea: 50,
     surface:    [],
-    bags:       '',
   })
 
   const canNext = [
@@ -274,7 +278,6 @@ export default function KitBuilder() {
     !!sel.beltWidth,
     true,
     sel.surface.length > 0,
-    !!sel.bags,
   ][step]
 
   function go(n: 1 | -1) {
@@ -285,7 +288,7 @@ export default function KitBuilder() {
   }
 
   function reset() {
-    setSel({ damageType: '', beltWidth: '', damageArea: 50, surface: [], bags: '' })
+    setSel({ damageType: '', beltWidth: '', damageArea: 50, surface: [] })
     setStep(0); setDir(1); setDone(false)
   }
 
@@ -317,7 +320,7 @@ export default function KitBuilder() {
             Kit Builder
           </h2>
           <p style={{ fontSize: '15px', color: '#8a9ab0', marginTop: '10px', marginBottom: '40px', lineHeight: 1.6 }}>
-            Answer 5 questions. Get the exact kit recommendation for your repair — and a branded PDF to take to site.
+            Answer 4 questions. Get the exact kit recommendation for your repair — and a branded PDF to take to site.
           </p>
         </motion.div>
 
@@ -488,49 +491,14 @@ export default function KitBuilder() {
                 </motion.div>
               )}
 
-              {/* ── Step 4: Quantity ── */}
-              {!done && step === 4 && (
-                <motion.div key="s4" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
-                  <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '6px', letterSpacing: '1px' }}>
-                    HOW MANY BAGS OF KK-FIX DO YOU NEED?
-                  </p>
-                  <p style={{ fontSize: '13px', color: '#555', marginBottom: '28px' }}>Select the quantity you'd like to order.</p>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    {BAG_COUNTS.map(({ value, label }) => {
-                      const selected = sel.bags === value
-                      return (
-                        <button key={value} type="button" onClick={() => setSel(p => ({ ...p, bags: value }))}
-                          style={{
-                            ...answerCardStyle(selected),
-                            flex: '1 1 80px',
-                            minWidth: '80px',
-                            maxWidth: '140px',
-                            textAlign: 'center',
-                            padding: '24px 16px',
-                          }}
-                          onMouseEnter={e => { if (!selected) e.currentTarget.style.borderColor = '#444' }}
-                          onMouseLeave={e => { if (!selected) e.currentTarget.style.borderColor = '#2a2a2a' }}>
-                          <span
-                            className="font-display"
-                            style={{ fontSize: '52px', color: selected ? '#E8650A' : '#f0f0f0', lineHeight: 1, display: 'block', transition: 'color 150ms' }}>
-                            {value}
-                          </span>
-                          <span style={{ fontSize: '11px', color: '#555', marginTop: '8px', display: 'block', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                            {label}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </motion.div>
-              )}
-
               {/* ── Result ── */}
-              {done && rec && (
+              {done && rec && (() => {
+                const bags = getRecommendedBags(sel)
+                return (
                 <motion.div key="result" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
 
                   {/* Top row: title + PDF */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '28px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
                     <div>
                       <p style={{ fontSize: '11px', color: '#E8650A', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>Recommendation</p>
                       <h3 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1, marginBottom: '4px' }}>
@@ -542,9 +510,6 @@ export default function KitBuilder() {
                         </span>
                         <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
                           Est. {rec.applicationTime}
-                        </span>
-                        <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
-                          {sel.bags} {sel.bags === '1' ? 'bag' : 'bags'}
                         </span>
                       </div>
                     </div>
@@ -561,6 +526,14 @@ export default function KitBuilder() {
                       <Download size={14} />
                       {generating ? 'Generating…' : 'Download PDF'}
                     </button>
+                  </div>
+
+                  {/* Recommended quantity */}
+                  <div style={{ marginBottom: '20px', padding: '16px 20px', background: 'rgba(232,101,10,0.07)', border: '1.5px solid rgba(232,101,10,0.25)' }}>
+                    <p style={{ fontSize: '11px', color: '#E8650A', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Recommended Quantity</p>
+                    <p className="font-display" style={{ fontSize: '36px', color: '#E8650A', lineHeight: 1 }}>
+                      {bags} <span style={{ fontSize: '18px', color: '#E8650A', opacity: 0.7 }}>bag{bags === '1' ? '' : 's'}</span>
+                    </p>
                   </div>
 
                   {rec.prepNote && (
@@ -603,7 +576,7 @@ export default function KitBuilder() {
                     </p>
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                       <a
-                        href={buildWhatsAppUrl(sel, rec)}
+                        href={buildWhatsAppUrl(sel, rec, bags)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -619,7 +592,7 @@ export default function KitBuilder() {
                         Order via WhatsApp
                       </a>
                       <a
-                        href={buildEmailUrl(sel, rec)}
+                        href={buildEmailUrl(sel, rec, bags)}
                         style={{
                           display: 'inline-flex', alignItems: 'center', gap: '8px',
                           background: 'transparent',
@@ -637,7 +610,8 @@ export default function KitBuilder() {
                   </div>
 
                 </motion.div>
-              )}
+                )
+              })()}
 
             </AnimatePresence>
           </div>
