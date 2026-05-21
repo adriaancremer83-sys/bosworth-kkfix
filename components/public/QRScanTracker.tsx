@@ -61,6 +61,9 @@ export default function QRScanTracker({ productId }: { productId: string | null 
   const searchParams = useSearchParams()
 
   useEffect(() => {
+    // Only track when the URL contains ?qr=1 — i.e. an actual QR code scan
+    if (searchParams.get('qr') !== '1') return
+
     const batchId = searchParams.get('batch')
     const unitId  = searchParams.get('unit')
 
