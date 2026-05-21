@@ -2,26 +2,27 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, ChevronLeft, Download, RotateCcw, CheckCircle2 } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Download, RotateCcw, CheckCircle2, MessageCircle, Mail } from 'lucide-react'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface Selection {
   damageType: string
-  beltWidth: string
-  damageArea: number   // cm²
-  surface: string[]
+  beltWidth:  string
+  damageArea: number
+  surface:    string[]
+  bags:       string
 }
 
 // ─── Step data ───────────────────────────────────────────────────────────────
 
 const DAMAGE_TYPES = [
-  { id: 'cut',          label: 'Cut / Laceration',   icon: '✂️', desc: 'Clean straight or jagged cut through belt' },
-  { id: 'abrasion',     label: 'Abrasion / Wear',    icon: '🔄', desc: 'Surface worn down over time' },
-  { id: 'puncture',     label: 'Puncture / Hole',    icon: '⚡', desc: 'Impact damage creating a hole' },
-  { id: 'delamination', label: 'Delamination',       icon: '📄', desc: 'Layers separating from each other' },
-  { id: 'gouge',        label: 'Gouge / Tear',       icon: '⛏️', desc: 'Material removed or torn away' },
-  { id: 'edge',         label: 'Edge Damage',        icon: '📐', desc: 'Belt edge fraying or cracking' },
+  { id: 'cut',          label: 'Cut / Laceration',   desc: 'Clean straight or jagged cut through belt' },
+  { id: 'abrasion',     label: 'Abrasion / Wear',    desc: 'Surface worn down over time' },
+  { id: 'puncture',     label: 'Puncture / Hole',    desc: 'Impact damage creating a hole' },
+  { id: 'delamination', label: 'Delamination',       desc: 'Layers separating from each other' },
+  { id: 'gouge',        label: 'Gouge / Tear',       desc: 'Material removed or torn away' },
+  { id: 'edge',         label: 'Edge Damage',        desc: 'Belt edge fraying or cracking' },
 ]
 
 const BELT_WIDTHS = [
@@ -30,11 +31,18 @@ const BELT_WIDTHS = [
 ]
 
 const SURFACES = [
-  { id: 'dry',       label: 'Dry & Clean' },
-  { id: 'wet',       label: 'Wet' },
-  { id: 'oily',      label: 'Oily / Contaminated' },
-  { id: 'rough',     label: 'Rough / Sandy' },
-  { id: 'repaired',  label: 'Previously Repaired' },
+  { id: 'dry',      label: 'Dry & Clean' },
+  { id: 'wet',      label: 'Wet' },
+  { id: 'oily',     label: 'Oily / Contaminated' },
+  { id: 'rough',    label: 'Rough / Sandy' },
+  { id: 'repaired', label: 'Previously Repaired' },
+]
+
+const BAG_COUNTS = [
+  { value: '1',  label: 'bag' },
+  { value: '2',  label: 'bags' },
+  { value: '3',  label: 'bags' },
+  { value: '4+', label: 'bags' },
 ]
 
 // ─── Recommendation engine ───────────────────────────────────────────────────
@@ -74,11 +82,11 @@ function getRecommendation(s: Selection): Recommendation {
   if (repaired) extraItems.push('Surface Abrader / Prep Tool')
 
   const notes: string[] = []
-  if (s.surface.includes('wet'))      notes.push('Surface must be towel-dried before application — KK-FIX does not cure on standing water.')
-  if (s.surface.includes('oily'))     notes.push('Degrease thoroughly with solvent; re-apply until swab shows clean.')
-  if (repaired)                       notes.push('Scarify the existing repair to a depth of 2mm before applying fresh compound.')
+  if (s.surface.includes('wet'))       notes.push('Surface must be towel-dried before application — KK-FIX does not cure on standing water.')
+  if (s.surface.includes('oily'))      notes.push('Degrease thoroughly with solvent; re-apply until swab shows clean.')
+  if (repaired)                        notes.push('Scarify the existing repair to a depth of 2mm before applying fresh compound.')
   if (s.damageType === 'delamination') notes.push('Inject compound between layers and clamp for a minimum of 2 hours.')
-  if (large)                          notes.push('Apply in two layers for damage areas over 100 cm²; allow 45 min between coats.')
+  if (large)                           notes.push('Apply in two layers for damage areas over 100 cm²; allow 45 min between coats.')
 
   return {
     kit: 'KK-FIX Conveyor Belt Repair Kit',
@@ -90,159 +98,175 @@ function getRecommendation(s: Selection): Recommendation {
   }
 }
 
+// ─── Order link builders ──────────────────────────────────────────────────────
+
+function buildWhatsAppUrl(sel: Selection, rec: Recommendation): string {
+  const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
+  const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
+  const msg =
+    `Hi Bosworth,\n\n` +
+    `I'd like to order KK-Fix based on a Kit Builder assessment:\n\n` +
+    `*Kit:* ${rec.kit}\n` +
+    `*Grade:* ${rec.grade}\n` +
+    `*Quantity:* ${sel.bags} bag(s)\n\n` +
+    `*Damage Type:* ${damage}\n` +
+    `*Belt Width:* ${sel.beltWidth}\n` +
+    `*Damage Area:* ${sel.damageArea} cm²\n` +
+    `*Surface:* ${surfaces}\n\n` +
+    `Please assist with the order.`
+  return `https://wa.me/27733701457?text=${encodeURIComponent(msg)}`
+}
+
+function buildEmailUrl(sel: Selection, rec: Recommendation): string {
+  const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
+  const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
+  const body =
+    `Hi Bosworth,\n\n` +
+    `I would like to place an order for KK-Fix based on the following Kit Builder assessment:\n\n` +
+    `Kit: ${rec.kit}\n` +
+    `Grade: ${rec.grade}\n` +
+    `Quantity: ${sel.bags} bag(s)\n\n` +
+    `Assessment Details:\n` +
+    `- Damage Type: ${damage}\n` +
+    `- Belt Width: ${sel.beltWidth}\n` +
+    `- Damage Area: ${sel.damageArea} cm²\n` +
+    `- Surface Condition: ${surfaces}\n\n` +
+    `Recommended Kit Contents:\n` +
+    rec.items.map(item => `- ${item}`).join('\n') +
+    `\n\nPlease get in touch to process this order.\n\nKind regards`
+  return `mailto:pulleys@bosworth.co.za?subject=${encodeURIComponent('KK-Fix Order Request')}&body=${encodeURIComponent(body)}`
+}
+
 // ─── PDF generator ───────────────────────────────────────────────────────────
 
 async function generatePDF(sel: Selection, rec: Recommendation) {
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
-  const W = 210
-  const ORANGE = [232, 101, 10] as [number, number, number]
-  const DARK   = [10, 10, 10]  as [number, number, number]
+  const W      = 210
+  const ORANGE = [232, 101, 10]  as [number, number, number]
+  const DARK   = [10,  10,  10]  as [number, number, number]
   const GREY   = [138, 154, 176] as [number, number, number]
   const WHITE  = [240, 240, 240] as [number, number, number]
 
-  // Header band
   doc.setFillColor(...DARK)
   doc.rect(0, 0, W, 40, 'F')
-
   doc.setFillColor(...ORANGE)
   doc.rect(0, 37, W, 3, 'F')
 
-  doc.setFontSize(28)
-  doc.setTextColor(...WHITE)
-  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(28); doc.setTextColor(...WHITE); doc.setFont('helvetica', 'bold')
   doc.text('KK-FIX', 14, 22)
-
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...GREY)
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
   doc.text('by BOSWORTH', 14, 29)
   doc.text('Kit Builder Report', 14, 35)
-
   doc.setFontSize(9)
-  doc.setTextColor(...GREY)
   doc.text(`Generated: ${new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'long', year: 'numeric' })}`, W - 14, 29, { align: 'right' })
 
   let y = 52
 
-  // Section header helper
   function sectionHeader(title: string) {
     doc.setFillColor(...ORANGE)
     doc.rect(14, y - 4, 4, 10, 'F')
-    doc.setFontSize(11)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...DARK)
+    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...DARK)
     doc.text(title, 21, y + 2)
     y += 12
   }
 
   function row(label: string, value: string) {
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...GREY)
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GREY)
     doc.text(label.toUpperCase(), 14, y)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...DARK)
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(...DARK)
     doc.text(value, 70, y)
     y += 7
   }
 
-  // Damage Assessment
   sectionHeader('DAMAGE ASSESSMENT')
   const damageLabel = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
-  row('Damage Type',  damageLabel)
-  row('Belt Width',   sel.beltWidth)
-  row('Damage Area',  `${sel.damageArea} cm²`)
-  row('Surface',      sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean')
+  row('Damage Type', damageLabel)
+  row('Belt Width',  sel.beltWidth)
+  row('Damage Area', `${sel.damageArea} cm²`)
+  row('Surface',     sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean')
+  row('Quantity',    `${sel.bags} bag(s)`)
   y += 4
 
-  // Recommendation
   sectionHeader('RECOMMENDED KIT')
-
-  doc.setFontSize(14)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...ORANGE)
-  doc.text(rec.kit, 14, y)
-  y += 7
-
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...DARK)
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...ORANGE)
+  doc.text(rec.kit, 14, y); y += 7
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...DARK)
   doc.text(`Grade: ${rec.grade}`, 14, y)
   doc.text(`Est. Application Time: ${rec.applicationTime}`, 110, y)
   y += 12
 
-  // Kit contents
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...GREY)
-  doc.text('KIT CONTENTS', 14, y)
-  y += 6
-
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GREY)
+  doc.text('KIT CONTENTS', 14, y); y += 6
   rec.items.forEach(item => {
-    doc.setFillColor(...ORANGE)
-    doc.circle(16, y - 1.5, 1, 'F')
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(...DARK)
-    doc.text(item, 20, y)
-    y += 6
+    doc.setFillColor(...ORANGE); doc.circle(16, y - 1.5, 1, 'F')
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...DARK)
+    doc.text(item, 20, y); y += 6
   })
   y += 4
 
-  // Notes
   if (rec.notes.length > 0) {
     sectionHeader('APPLICATION NOTES')
     rec.notes.forEach(note => {
-      doc.setFillColor(232, 101, 10)
-      doc.setFontSize(8)
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...ORANGE)
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...ORANGE)
       doc.text('NOTE', 14, y)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(80, 80, 80)
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(80, 80, 80)
       const lines = doc.splitTextToSize(note, W - 42)
       doc.text(lines, 28, y)
       y += lines.length * 5 + 5
     })
   }
 
-  // Footer
-  doc.setFillColor(...DARK)
-  doc.rect(0, 277, W, 20, 'F')
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...GREY)
+  doc.setFillColor(...DARK); doc.rect(0, 277, W, 20, 'F')
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
   doc.text('Bosworth (Pty) Ltd  ·  21 Vereeniging Rd, Alrode  ·  pulleys@bosworth.co.za  ·  +27 11 864 1643', W / 2, 287, { align: 'center' })
   doc.text('ISO 9001:2015 · ISO 14001:2015 · ISO 45001:2015 · Member CMA South Africa', W / 2, 292, { align: 'center' })
 
   doc.save(`KK-FIX-Kit-Assessment-${Date.now()}.pdf`)
 }
 
-// ─── Slide animation variants ────────────────────────────────────────────────
+// ─── Slide animation variants ─────────────────────────────────────────────────
 
 function slideVariants(dir: 1 | -1) {
   return {
-    enter:  { x: dir * 60, opacity: 0 },
-    center: { x: 0,        opacity: 1 },
+    enter:  { x: dir * 60,  opacity: 0 },
+    center: { x: 0,         opacity: 1 },
     exit:   { x: dir * -60, opacity: 0 },
+  }
+}
+
+// ─── Shared card style helpers ────────────────────────────────────────────────
+
+function answerCardStyle(selected: boolean): React.CSSProperties {
+  return {
+    background:  selected ? 'rgba(232,101,10,0.10)' : '#111111',
+    border:      `1.5px solid ${selected ? '#E8650A' : '#2a2a2a'}`,
+    padding:     '18px',
+    textAlign:   'left',
+    cursor:      'pointer',
+    transition:  'border-color 150ms, background 150ms',
+    position:    'relative',
   }
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
+const TOTAL_STEPS = 5
+const STEP_LABELS = ['Damage Type', 'Belt Width', 'Damage Area', 'Surface', 'Quantity']
+
 export default function KitBuilder() {
-  const [step, setStep]       = useState(0)
-  const [direction, setDir]   = useState<1 | -1>(1)
-  const [done, setDone]       = useState(false)
-  const [generating, setGen]  = useState(false)
+  const [step, setStep]      = useState(0)
+  const [direction, setDir]  = useState<1 | -1>(1)
+  const [done, setDone]      = useState(false)
+  const [generating, setGen] = useState(false)
 
   const [sel, setSel] = useState<Selection>({
     damageType: '',
     beltWidth:  '',
     damageArea: 50,
     surface:    [],
+    bags:       '',
   })
 
   const canNext = [
@@ -250,17 +274,18 @@ export default function KitBuilder() {
     !!sel.beltWidth,
     true,
     sel.surface.length > 0,
+    !!sel.bags,
   ][step]
 
   function go(n: 1 | -1) {
     setDir(n)
     const next = step + n
-    if (next > 3) { setDone(true); return }
+    if (next >= TOTAL_STEPS) { setDone(true); return }
     setStep(next)
   }
 
   function reset() {
-    setSel({ damageType: '', beltWidth: '', damageArea: 50, surface: [] })
+    setSel({ damageType: '', beltWidth: '', damageArea: 50, surface: [], bags: '' })
     setStep(0); setDir(1); setDone(false)
   }
 
@@ -281,8 +306,6 @@ export default function KitBuilder() {
 
   const rec = done ? getRecommendation(sel) : null
 
-  const STEP_LABELS = ['Damage Type', 'Belt Width', 'Damage Area', 'Surface Condition']
-
   return (
     <section id="kit-builder" style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '860px', margin: '0 auto' }}>
@@ -294,7 +317,7 @@ export default function KitBuilder() {
             Kit Builder
           </h2>
           <p style={{ fontSize: '15px', color: '#8a9ab0', marginTop: '10px', marginBottom: '40px', lineHeight: 1.6 }}>
-            Answer 4 questions. Get the exact kit recommendation for your repair — and a branded PDF to take to site.
+            Answer 5 questions. Get the exact kit recommendation for your repair — and a branded PDF to take to site.
           </p>
         </motion.div>
 
@@ -306,7 +329,7 @@ export default function KitBuilder() {
             <div style={{ padding: '20px 28px', borderBottom: '1px solid #1a1a1a' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 {STEP_LABELS.map((label, i) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: i < 3 ? 1 : 'none' }}>
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: i < TOTAL_STEPS - 1 ? 1 : 'none' }}>
                     <div style={{
                       width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -319,13 +342,18 @@ export default function KitBuilder() {
                       {i < step ? <CheckCircle2 size={12} /> : i + 1}
                     </div>
                     <span style={{ fontSize: '11px', color: i === step ? '#f0f0f0' : '#444', whiteSpace: 'nowrap', display: 'none' }} className="sm:inline">{label}</span>
-                    {i < 3 && <div style={{ flex: 1, height: '1px', background: i < step ? '#E8650A' : '#1e1e1e', margin: '0 6px', transition: 'background 250ms' }} />}
+                    {i < TOTAL_STEPS - 1 && (
+                      <div style={{ flex: 1, height: '1px', background: i < step ? '#E8650A' : '#1e1e1e', margin: '0 6px', transition: 'background 250ms' }} />
+                    )}
                   </div>
                 ))}
               </div>
               <div style={{ height: '2px', background: '#1a1a1a' }}>
-                <motion.div animate={{ width: `${(step / 3) * 100}%` }} transition={{ duration: 0.3 }}
-                  style={{ height: '100%', background: '#E8650A' }} />
+                <motion.div
+                  animate={{ width: `${(step / (TOTAL_STEPS - 1)) * 100}%` }}
+                  transition={{ duration: 0.3 }}
+                  style={{ height: '100%', background: '#E8650A' }}
+                />
               </div>
             </div>
           )}
@@ -336,35 +364,35 @@ export default function KitBuilder() {
 
               {/* ── Step 0: Damage type ── */}
               {!done && step === 0 && (
-                <motion.div key="s0" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}>
+                <motion.div key="s0" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
                   <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '20px', letterSpacing: '1px' }}>
                     WHAT TYPE OF DAMAGE?
                   </p>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px' }}>
-                    {DAMAGE_TYPES.map(d => (
-                      <button key={d.id} type="button" onClick={() => setSel(p => ({ ...p, damageType: d.id }))}
-                        style={{
-                          background: sel.damageType === d.id ? 'rgba(232,101,10,0.12)' : '#111',
-                          border: `1.5px solid ${sel.damageType === d.id ? '#E8650A' : '#2a2a2a'}`,
-                          padding: '16px', textAlign: 'left', cursor: 'pointer',
-                          transition: 'all 150ms',
-                        }}
-                        onMouseEnter={e => { if (sel.damageType !== d.id) e.currentTarget.style.borderColor = '#444' }}
-                        onMouseLeave={e => { if (sel.damageType !== d.id) e.currentTarget.style.borderColor = '#2a2a2a' }}>
-                        <div style={{ fontSize: '24px', marginBottom: '8px' }}>{d.icon}</div>
-                        <p style={{ fontSize: '13px', fontWeight: 600, color: sel.damageType === d.id ? '#E8650A' : '#f0f0f0', marginBottom: '4px' }}>{d.label}</p>
-                        <p style={{ fontSize: '11px', color: '#555', lineHeight: 1.4 }}>{d.desc}</p>
-                      </button>
-                    ))}
+                    {DAMAGE_TYPES.map(d => {
+                      const selected = sel.damageType === d.id
+                      return (
+                        <button key={d.id} type="button" onClick={() => setSel(p => ({ ...p, damageType: d.id }))}
+                          style={answerCardStyle(selected)}
+                          onMouseEnter={e => { if (!selected) e.currentTarget.style.borderColor = '#444' }}
+                          onMouseLeave={e => { if (!selected) e.currentTarget.style.borderColor = '#2a2a2a' }}>
+                          {selected && (
+                            <CheckCircle2 size={14} style={{ color: '#E8650A', position: 'absolute', top: '12px', right: '12px' }} />
+                          )}
+                          <p style={{ fontSize: '14px', fontWeight: 600, color: selected ? '#E8650A' : '#f0f0f0', marginBottom: '6px', paddingRight: '20px' }}>
+                            {d.label}
+                          </p>
+                          <p style={{ fontSize: '11px', color: '#555', lineHeight: 1.4 }}>{d.desc}</p>
+                        </button>
+                      )
+                    })}
                   </div>
                 </motion.div>
               )}
 
               {/* ── Step 1: Belt width ── */}
               {!done && step === 1 && (
-                <motion.div key="s1" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}>
+                <motion.div key="s1" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
                   <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '20px', letterSpacing: '1px' }}>
                     WHAT IS THE BELT WIDTH?
                   </p>
@@ -391,8 +419,7 @@ export default function KitBuilder() {
 
               {/* ── Step 2: Damage area ── */}
               {!done && step === 2 && (
-                <motion.div key="s2" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}>
+                <motion.div key="s2" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
                   <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '20px', letterSpacing: '1px' }}>
                     WHAT IS THE DAMAGE AREA?
                   </p>
@@ -404,9 +431,7 @@ export default function KitBuilder() {
                       <span style={{ fontSize: '18px', color: '#8a9ab0' }}>cm²</span>
                     </div>
                     <input
-                      type="range"
-                      min={5} max={300} step={5}
-                      value={sel.damageArea}
+                      type="range" min={5} max={300} step={5} value={sel.damageArea}
                       onChange={e => setSel(p => ({ ...p, damageArea: Number(e.target.value) }))}
                       style={{ width: '100%', accentColor: '#E8650A', height: '4px', cursor: 'pointer' }}
                     />
@@ -437,8 +462,7 @@ export default function KitBuilder() {
 
               {/* ── Step 3: Surface condition ── */}
               {!done && step === 3 && (
-                <motion.div key="s3" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit"
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}>
+                <motion.div key="s3" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
                   <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '6px', letterSpacing: '1px' }}>
                     SURFACE CONDITION?
                   </p>
@@ -464,15 +488,51 @@ export default function KitBuilder() {
                 </motion.div>
               )}
 
+              {/* ── Step 4: Quantity ── */}
+              {!done && step === 4 && (
+                <motion.div key="s4" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
+                  <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '6px', letterSpacing: '1px' }}>
+                    HOW MANY BAGS OF KK-FIX DO YOU NEED?
+                  </p>
+                  <p style={{ fontSize: '13px', color: '#555', marginBottom: '28px' }}>Select the quantity you'd like to order.</p>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {BAG_COUNTS.map(({ value, label }) => {
+                      const selected = sel.bags === value
+                      return (
+                        <button key={value} type="button" onClick={() => setSel(p => ({ ...p, bags: value }))}
+                          style={{
+                            ...answerCardStyle(selected),
+                            flex: '1 1 80px',
+                            minWidth: '80px',
+                            maxWidth: '140px',
+                            textAlign: 'center',
+                            padding: '24px 16px',
+                          }}
+                          onMouseEnter={e => { if (!selected) e.currentTarget.style.borderColor = '#444' }}
+                          onMouseLeave={e => { if (!selected) e.currentTarget.style.borderColor = '#2a2a2a' }}>
+                          <span
+                            className="font-display"
+                            style={{ fontSize: '52px', color: selected ? '#E8650A' : '#f0f0f0', lineHeight: 1, display: 'block', transition: 'color 150ms' }}>
+                            {value}
+                          </span>
+                          <span style={{ fontSize: '11px', color: '#555', marginTop: '8px', display: 'block', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            {label}
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </motion.div>
+              )}
+
               {/* ── Result ── */}
               {done && rec && (
-                <motion.div key="result" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}>
+                <motion.div key="result" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
+
+                  {/* Top row: title + PDF */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '28px' }}>
                     <div>
-                      <p style={{ fontSize: '11px', color: '#E8650A', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>
-                        Recommendation
-                      </p>
+                      <p style={{ fontSize: '11px', color: '#E8650A', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>Recommendation</p>
                       <h3 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1, marginBottom: '4px' }}>
                         {rec.kit}
                       </h3>
@@ -483,19 +543,22 @@ export default function KitBuilder() {
                         <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
                           Est. {rec.applicationTime}
                         </span>
+                        <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
+                          {sel.bags} {sel.bags === '1' ? 'bag' : 'bags'}
+                        </span>
                       </div>
                     </div>
                     <button onClick={downloadPDF} disabled={generating}
                       style={{
                         background: generating ? '#1a1a1a' : '#E8650A', color: generating ? '#555' : '#fff',
-                        border: 'none', padding: '14px 28px', fontSize: '14px', fontWeight: 600,
+                        border: 'none', padding: '12px 24px', fontSize: '13px', fontWeight: 600,
                         cursor: generating ? 'not-allowed' : 'pointer',
-                        display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '0.5px',
+                        display: 'flex', alignItems: 'center', gap: '8px',
                         transition: 'background 150ms', flexShrink: 0,
                       }}
                       onMouseEnter={e => { if (!generating) e.currentTarget.style.background = '#C4530A' }}
-                      onMouseLeave={e => { if (!generating) e.currentTarget.style.background = '#E8650A' }}>
-                      <Download size={15} />
+                      onMouseLeave={e => { if (!generating) e.currentTarget.style.background = generating ? '#1a1a1a' : '#E8650A' }}>
+                      <Download size={14} />
                       {generating ? 'Generating…' : 'Download PDF'}
                     </button>
                   </div>
@@ -506,7 +569,8 @@ export default function KitBuilder() {
                     </div>
                   )}
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  {/* Kit contents + notes */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '28px' }}>
                     <div>
                       <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px', fontWeight: 700 }}>Kit Contents</p>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -531,6 +595,47 @@ export default function KitBuilder() {
                       </div>
                     )}
                   </div>
+
+                  {/* Order action buttons */}
+                  <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: '24px' }}>
+                    <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '14px', fontWeight: 700 }}>
+                      Place Your Order
+                    </p>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                      <a
+                        href={buildWhatsAppUrl(sel, rec)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '8px',
+                          background: '#25D366', color: '#fff',
+                          padding: '12px 24px', fontSize: '14px', fontWeight: 600,
+                          textDecoration: 'none', transition: 'background 150ms',
+                          letterSpacing: '0.3px',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#1EB857' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#25D366' }}>
+                        <MessageCircle size={16} />
+                        Order via WhatsApp
+                      </a>
+                      <a
+                        href={buildEmailUrl(sel, rec)}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '8px',
+                          background: 'transparent',
+                          border: '1.5px solid #E8650A', color: '#E8650A',
+                          padding: '12px 24px', fontSize: '14px', fontWeight: 600,
+                          textDecoration: 'none', transition: 'background 150ms, color 150ms',
+                          letterSpacing: '0.3px',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#E8650A'; e.currentTarget.style.color = '#fff' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#E8650A' }}>
+                        <Mail size={16} />
+                        Order via Email
+                      </a>
+                    </div>
+                  </div>
+
                 </motion.div>
               )}
 
@@ -538,10 +643,7 @@ export default function KitBuilder() {
           </div>
 
           {/* Footer nav */}
-          <div style={{
-            padding: '16px 28px', borderTop: '1px solid #1a1a1a',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}>
+          <div style={{ padding: '16px 28px', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             {done ? (
               <>
                 <button onClick={reset}
@@ -566,7 +668,7 @@ export default function KitBuilder() {
                 </button>
 
                 <span style={{ fontSize: '12px', color: '#555' }}>
-                  Step {step + 1} of 4
+                  Step {step + 1} of {TOTAL_STEPS}
                 </span>
 
                 <motion.button
@@ -577,12 +679,11 @@ export default function KitBuilder() {
                     border: 'none', color: canNext ? '#fff' : '#333',
                     padding: '10px 24px', fontSize: '13px', fontWeight: 600,
                     cursor: canNext ? 'pointer' : 'not-allowed',
-                    display: 'flex', alignItems: 'center', gap: '6px',
-                    transition: 'background 150ms',
+                    display: 'flex', alignItems: 'center', gap: '6px', transition: 'background 150ms',
                   }}
                   onMouseEnter={e => { if (canNext) e.currentTarget.style.background = '#C4530A' }}
                   onMouseLeave={e => { if (canNext) e.currentTarget.style.background = '#E8650A' }}>
-                  {step === 3 ? 'Get Recommendation' : 'Next'} <ChevronRight size={14} />
+                  {step === TOTAL_STEPS - 1 ? 'Get Recommendation' : 'Next'} <ChevronRight size={14} />
                 </motion.button>
               </>
             )}
