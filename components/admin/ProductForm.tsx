@@ -416,7 +416,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-20 right-8 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg z-50"
+        <div className="fixed bottom-20 right-4 md:right-8 flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg z-50"
           style={{
             background: toast.type === 'success' ? 'rgba(34,197,94,0.12)' : 'rgba(232,101,10,0.12)',
             border: `1px solid ${toast.type === 'success' ? 'rgba(34,197,94,0.4)' : 'rgba(232,101,10,0.4)'}`,

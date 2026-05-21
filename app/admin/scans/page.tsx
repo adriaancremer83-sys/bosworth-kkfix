@@ -9,10 +9,12 @@ import {
   Globe, Calendar, Package,
 } from 'lucide-react'
 
+const MAP_HEIGHT = 'clamp(240px, 50vw, 400px)'
+
 const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), {
   ssr: false,
   loading: () => (
-    <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ height: MAP_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Loader2 size={24} style={{ color: '#E8650A', animation: 'spin 1s linear infinite' }} />
     </div>
   ),
@@ -54,15 +56,20 @@ const ORANGE = '#E8650A'
 function StatCard({ label, value, icon: Icon, sub }: {
   label: string; value: string | number; icon: React.ElementType; sub?: string
 }) {
+  const isString = typeof value === 'string'
   return (
     <div style={CARD}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
           <p style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>{label}</p>
-          <p style={{ fontSize: '32px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1 }}>{value}</p>
+          <p style={{
+            fontSize: isString ? 'clamp(16px, 4vw, 28px)' : '32px',
+            fontWeight: 700, color: '#f0f0f0', lineHeight: 1.1,
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}>{value}</p>
           {sub && <p style={{ fontSize: '12px', color: '#555', marginTop: '6px' }}>{sub}</p>}
         </div>
-        <div style={{ background: 'rgba(232,101,10,0.1)', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: 'rgba(232,101,10,0.1)', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Icon size={20} style={{ color: ORANGE }} />
         </div>
       </div>
@@ -201,7 +208,7 @@ export default function ScansPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px', marginBottom: '32px' }}>
         <StatCard label="Total Scans" value={scans.length} icon={Activity} />
         <StatCard label="Scans Today" value={scansToday} icon={Calendar} />
         <StatCard label="Unique Locations" value={uniqueLocations} icon={Globe} />
@@ -227,11 +234,11 @@ export default function ScansPage() {
           </p>
         </div>
         {loading ? (
-          <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ height: MAP_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Loader2 size={24} className="animate-spin" style={{ color: ORANGE }} />
           </div>
         ) : (
-          <ScanErrorBoundary label="Map" height="400px">
+          <ScanErrorBoundary label="Map" height={MAP_HEIGHT}>
             <ScanMap points={mapPoints} />
           </ScanErrorBoundary>
         )}
@@ -240,7 +247,7 @@ export default function ScansPage() {
       {/* Filters */}
       <div style={{ ...CARD, marginBottom: '16px' }}>
         <p style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '14px' }}>Filters</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px' }}>
           <div>
             <label style={{ fontSize: '11px', color: '#555', display: 'block', marginBottom: '4px' }}>From date</label>
             <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ ...inputStyle, width: '100%' }} />
