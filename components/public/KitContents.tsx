@@ -45,7 +45,7 @@ export default function KitContents({ items }: KitContentsProps) {
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
-              What&apos;s in the Box
+              What&apos;s in the Bag
             </h2>
             <span
               className="font-display"
@@ -92,11 +92,11 @@ export default function KitContents({ items }: KitContentsProps) {
                   e.currentTarget.style.transform = 'translateY(0)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}>
-                {(item as any).image_url ? (
+                {item.image_url ? (
                   <img
-                    src={(item as any).image_url}
+                    src={item.image_url}
                     alt={item.item_name}
-                    style={{ width: '100%', height: '80px', objectFit: 'contain', marginBottom: '12px' }}
+                    style={{ width: '100%', height: '120px', objectFit: 'contain', marginBottom: '12px' }}
                   />
                 ) : (
                   <Icon size={22} style={{ color: '#E8650A' }} />

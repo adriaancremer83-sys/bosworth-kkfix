@@ -105,7 +105,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
             <ImageUpload
               value={item.image_url ?? null}
               onChange={url => update(item._key!, 'image_url', url)}
-              bucket="kit-images"
+              bucket="product-images"
               label="Item Photo"
               width={140}
               aspectRatio="1/1"
