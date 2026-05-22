@@ -3,10 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, CheckCircle, AlertCircle, X, PlusCircle } from 'lucide-react'
-import {
-  createProduct, updateProduct,
-  upsertInstructions, upsertKitContents, upsertSafetyItems, upsertTechSpecs,
-} from '@/lib/products'
 import type { ProductWithRelations, Instruction, KitContent, SafetyItem, TechSpec } from '@/lib/types'
 import KitContentsEditor from './KitContentsEditor'
 import InstructionsEditor from './InstructionsEditor'
@@ -199,7 +195,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
     setLoading(true)
     try {
-      const data = {
+      const productData = {
         name: name.trim(),
         slug: slug.trim(),
         subtitle: subtitle || null,
@@ -217,19 +213,71 @@ export default function ProductForm({ product }: ProductFormProps) {
         is_active: isActive,
       }
 
-      let productId = product?.id
-      if (isEdit && productId) {
-        await updateProduct(productId, data)
-      } else {
-        const created = await createProduct(data)
-        productId = created.id
-      }
+      const kitContentsData = kitContents.map((item, i) => ({
+        item_name: item.item_name ?? '',
+        item_description: item.item_description ?? null,
+        quantity: item.quantity ?? null,
+        image_url: item.image_url ?? null,
+        sort_order: i,
+      }))
 
-      if (productId) {
-        await upsertKitContents(productId, kitContents.map((item, i) => ({ ...item, sort_order: i })))
-        await upsertInstructions(productId, instructions.map((item, i) => ({ ...item, step_number: i + 1 })))
-        await upsertSafetyItems(productId, safetyItems.map((item, i) => ({ ...item, sort_order: i })))
-        await upsertTechSpecs(productId, techSpecs.map((s, i) => ({ key: s.key, value: s.value, sort_order: i })))
+      const instructionsData = instructions.map((item, i) => ({
+        step_number: i + 1,
+        title: item.title ?? '',
+        description: item.description ?? '',
+        warning: item.warning ?? null,
+        image_url: item.image_url ?? null,
+        estimated_time: item.estimated_time ?? null,
+      }))
+
+      const safetyItemsData = safetyItems.map((item, i) => ({
+        icon: item.icon ?? 'alert-triangle',
+        label: item.label ?? '',
+        description: item.description ?? null,
+        type: item.type ?? 'warning',
+        sort_order: i,
+      }))
+
+      const techSpecsData = techSpecs
+        .filter(s => s.key?.trim() && s.value?.trim())
+        .map((s, i) => ({ key: s.key, value: s.value, sort_order: i }))
+
+      let productId = product?.id
+
+      if (isEdit && productId) {
+        const res = await fetch(`/api/admin/products/${productId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product: productData,
+            kit_contents: kitContentsData,
+            instructions: instructionsData,
+            safety_items: safetyItemsData,
+            tech_specs: techSpecsData,
+          }),
+        })
+        if (!res.ok) {
+          const json = await res.json()
+          throw new Error(json.error ?? 'Update failed')
+        }
+      } else {
+        const res = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product: productData,
+            kit_contents: kitContentsData,
+            instructions: instructionsData,
+            safety_items: safetyItemsData,
+            tech_specs: techSpecsData,
+          }),
+        })
+        if (!res.ok) {
+          const json = await res.json()
+          throw new Error(json.error ?? 'Create failed')
+        }
+        const json = await res.json()
+        productId = json.id
       }
 
       showToast('success', isEdit ? 'Product updated.' : 'Product created.')

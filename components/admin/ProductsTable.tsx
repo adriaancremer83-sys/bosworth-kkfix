@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pencil, QrCode, Eye, EyeOff, Trash2, Loader2 } from 'lucide-react'
-import { deleteProduct, toggleProductActive } from '@/lib/products'
 import type { Product } from '@/lib/types'
 
 interface ProductsTableProps {
@@ -19,7 +18,12 @@ export default function ProductsTable({ initialProducts }: ProductsTableProps) {
   async function handleToggle(product: Product) {
     setLoadingId(product.id)
     try {
-      await toggleProductActive(product.id, !product.is_active)
+      const res = await fetch(`/api/admin/products/${product.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: { is_active: !product.is_active } }),
+      })
+      if (!res.ok) throw new Error('Toggle failed')
       setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: !p.is_active } : p))
     } finally {
       setLoadingId(null)
@@ -30,7 +34,8 @@ export default function ProductsTable({ initialProducts }: ProductsTableProps) {
     if (!confirm(`Delete "${product.name}"? This cannot be undone.`)) return
     setLoadingId(product.id)
     try {
-      await deleteProduct(product.id)
+      const res = await fetch(`/api/admin/products/${product.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Delete failed')
       setProducts(prev => prev.filter(p => p.id !== product.id))
     } finally {
       setLoadingId(null)
