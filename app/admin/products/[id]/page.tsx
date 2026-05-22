@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createServiceSupabaseClient } from '@/lib/supabase-server'
 import ProductForm from '@/components/admin/ProductForm'
-import type { ProductWithRelations, Instruction, SafetyItem, KitContent } from '@/lib/types'
+import type { ProductWithRelations, Instruction, SafetyItem, KitContent, TechSpec } from '@/lib/types'
 
 interface PageProps {
   params: { id: string }
@@ -10,19 +10,33 @@ interface PageProps {
 async function getProductById(id: string): Promise<ProductWithRelations | null> {
   try {
     const supabase = createServiceSupabaseClient()
-    const { data, error } = await supabase
+
+    const { data: product, error } = await supabase
       .from('products')
-      .select('*, instructions(*), safety_items(*), kit_contents(*)')
+      .select('*')
       .eq('id', id)
       .single()
 
-    if (error || !data) return null
+    if (error || !product) return null
+
+    const [
+      { data: instructions },
+      { data: safety_items },
+      { data: kit_contents },
+      { data: tech_specs },
+    ] = await Promise.all([
+      supabase.from('instructions').select('*').eq('product_id', id).order('step_number', { ascending: true }),
+      supabase.from('safety_items').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+      supabase.from('kit_contents').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+      supabase.from('tech_specs').select('*').eq('product_id', id).order('sort_order', { ascending: true }),
+    ])
 
     return {
-      ...data,
-      instructions: (data.instructions as Instruction[]).sort((a, b) => a.step_number - b.step_number),
-      safety_items: (data.safety_items as SafetyItem[]).sort((a, b) => a.sort_order - b.sort_order),
-      kit_contents: (data.kit_contents as KitContent[]).sort((a, b) => a.sort_order - b.sort_order),
+      ...product,
+      instructions: (instructions ?? []) as Instruction[],
+      safety_items:  (safety_items  ?? []) as SafetyItem[],
+      kit_contents:  (kit_contents  ?? []) as KitContent[],
+      tech_specs:    (tech_specs    ?? []) as TechSpec[],
     } as ProductWithRelations
   } catch {
     return null
