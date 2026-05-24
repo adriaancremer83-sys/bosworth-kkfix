@@ -63,9 +63,9 @@ function StatCard({ label, value, icon: Icon, sub }: {
         <div style={{ minWidth: 0, flex: 1 }}>
           <p style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>{label}</p>
           <p title={String(value)} style={{
-            fontSize: isString ? 'clamp(16px, 4vw, 28px)' : '32px',
-            fontWeight: 700, color: '#f0f0f0', lineHeight: 1.1,
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            fontSize: isString ? '16px' : '32px',
+            fontWeight: 700, color: '#f0f0f0', lineHeight: 1.3,
+            wordBreak: 'break-word',
           }}>{value}</p>
           {sub && <p style={{ fontSize: '12px', color: '#555', marginTop: '6px' }}>{sub}</p>}
         </div>
