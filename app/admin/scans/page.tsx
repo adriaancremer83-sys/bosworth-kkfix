@@ -139,7 +139,13 @@ export default function ScansPage() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => {
+    load()
+    // Refresh whenever the admin switches back to this tab
+    const onVisible = () => { if (document.visibilityState === 'visible') load() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [])
 
   const filtered = useMemo(() => {
     return scans.filter(s => {
