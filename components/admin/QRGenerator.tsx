@@ -37,7 +37,7 @@ export default function QRGenerator({ products, initialProductId }: QRGeneratorP
   const [batchDownloading, setBatchDownloading] = useState(false)
 
   const selectedProduct = products.find(p => p.id === selectedId)
-  const productUrl = selectedProduct ? `${baseUrl}/products/${selectedProduct.slug}` : ''
+  const productUrl = selectedProduct ? `${baseUrl}/products/${selectedProduct.slug}?qr=1` : ''
 
   const generateQR = useCallback(async (url: string, size: number) => {
     return QRCode.toDataURL(url, {
