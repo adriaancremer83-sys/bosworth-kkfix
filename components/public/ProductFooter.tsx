@@ -77,6 +77,16 @@ export default function ProductFooter() {
             <p style={{ fontSize: '11px', color: '#333' }}>Part of the Hudaco Group</p>
             <span style={{ fontSize: '11px', color: '#222' }}>·</span>
             <a
+              href="https://www.forgesystems.co.za"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: '11px', color: '#555', textDecoration: 'none', fontWeight: 700, transition: 'color 150ms' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#CC1F28' }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#555' }}>
+              Built by Forge Systems
+            </a>
+            <span style={{ fontSize: '11px', color: '#222' }}>·</span>
+            <a
               href="/admin/products"
               style={{ fontSize: '11px', color: '#333', textDecoration: 'none', transition: 'color 150ms' }}
               onMouseEnter={e => { e.currentTarget.style.color = '#CC1F28' }}
