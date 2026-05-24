@@ -281,6 +281,7 @@ export default function ProductForm({ product }: ProductFormProps) {
       }
 
       showToast('success', isEdit ? 'Product updated.' : 'Product created.')
+      router.refresh()
       if (!isEdit && productId) {
         setTimeout(() => router.push(`/admin/products/${productId}`), 1500)
       }

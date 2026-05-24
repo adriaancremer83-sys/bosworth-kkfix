@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProductBySlug } from '@/lib/products-server'

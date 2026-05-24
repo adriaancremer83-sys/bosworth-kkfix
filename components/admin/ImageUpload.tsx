@@ -45,6 +45,7 @@ export default function ImageUpload({
       onChange(json.url)
       setProgress(100)
     } catch (err) {
+      console.error('Supabase upload error:', err)
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {
       setUploading(false)

@@ -1,6 +1,9 @@
 import { createServiceSupabaseClient } from './supabase-server'
 import type { Product, Instruction, KitContent, SafetyItem, TechSpec, ProductWithRelations } from './types'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
   try {
     const supabase = createServiceSupabaseClient()

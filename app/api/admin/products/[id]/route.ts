@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { createServiceSupabaseClient } from '@/lib/supabase-server'
 
 interface RouteParams { params: { id: string } }
@@ -55,6 +56,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       }
     }
 
+    revalidatePath('/products/[slug]', 'page')
+    revalidatePath('/admin/products', 'page')
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 })
@@ -66,6 +69,8 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     const supabase = createServiceSupabaseClient()
     const { error } = await supabase.from('products').delete().eq('id', params.id)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    revalidatePath('/products/[slug]', 'page')
+    revalidatePath('/admin/products', 'page')
     return NextResponse.json({ ok: true })
   } catch {
     return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 })
