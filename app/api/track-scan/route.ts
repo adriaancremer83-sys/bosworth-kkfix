@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       console.error('[track-scan] insert error:', error.message, error.details)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+    console.log('[track-scan] inserted scan for product:', product_id)
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('[track-scan] unexpected error:', err)

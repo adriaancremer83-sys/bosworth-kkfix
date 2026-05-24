@@ -2,15 +2,6 @@
 
 import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
-
-// Insert directly with the anon key — "Public insert qr_scans" RLS policy allows this.
-// Bypasses the server API route so no SUPABASE_SERVICE_ROLE_KEY dependency on the client.
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-)
 
 const IP_CACHE_KEY = 'kkfix_ipgeo_v1'
 const IP_CACHE_TTL = 60 * 60 * 1000 // 1 hour
@@ -66,8 +57,6 @@ export default function QRScanTracker({ productId }: { productId: string | null 
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (searchParams.get('qr') !== '1') return
-
     const batchId = searchParams.get('batch')
     const unitId  = searchParams.get('unit')
 
@@ -76,21 +65,31 @@ export default function QRScanTracker({ productId }: { productId: string | null 
 
       const [gps, ipGeo] = await Promise.all([getGPSCoords(), getIpGeo()])
 
-      const { error } = await supabase.from('qr_scans').insert({
-        lat:         gps.lat,
-        lng:         gps.lng,
-        city:        ipGeo.city,
-        region:      ipGeo.region,
-        country:     ipGeo.country,
-        device_type: getDeviceType(ua),
-        user_agent:  ua,
-        batch_id:    batchId  ?? null,
-        unit_id:     unitId   ?? null,
-        ip_address:  ipGeo.ip,
-        product_id:  productId,
-      })
-
-      if (error) console.error('[QRScanTracker] insert failed:', error.message)
+      try {
+        const res = await fetch('/api/track-scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lat:         gps.lat,
+            lng:         gps.lng,
+            city:        ipGeo.city,
+            region:      ipGeo.region,
+            country:     ipGeo.country,
+            device_type: getDeviceType(ua),
+            user_agent:  ua,
+            batch_id:    batchId  ?? null,
+            unit_id:     unitId   ?? null,
+            ip_address:  ipGeo.ip,
+            product_id:  productId,
+          }),
+        })
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}))
+          console.error('[QRScanTracker] insert failed:', json.error ?? res.status)
+        }
+      } catch (err) {
+        console.error('[QRScanTracker] fetch error:', err)
+      }
     }
 
     track().catch(console.error)
