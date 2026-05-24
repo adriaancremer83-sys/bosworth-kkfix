@@ -120,13 +120,14 @@ function buildDayCounts(scans: Scan[], days: number): { date: string; count: num
 export default function ScansPage() {
   const [scans, setScans] = useState<Scan[]>([])
   const [loading, setLoading] = useState(true)
+  const [syncing, setSyncing] = useState(false)
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [batchFilter, setBatchFilter] = useState('')
   const [locationFilter, setLocationFilter] = useState('')
 
-  async function load() {
-    setLoading(true)
+  async function load(silent = false) {
+    silent ? setSyncing(true) : setLoading(true)
     try {
       const res = await fetch('/api/admin/scans')
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -135,16 +136,23 @@ export default function ScansPage() {
     } catch (err) {
       console.error('[scans page] load error:', err)
     } finally {
-      setLoading(false)
+      silent ? setSyncing(false) : setLoading(false)
     }
   }
 
   useEffect(() => {
     load()
-    // Refresh whenever the admin switches back to this tab
-    const onVisible = () => { if (document.visibilityState === 'visible') load() }
+    // Poll every 30 seconds while the tab is visible
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') load(true)
+    }, 30000)
+    // Also refresh immediately when the admin switches back to this tab
+    const onVisible = () => { if (document.visibilityState === 'visible') load(true) }
     document.addEventListener('visibilitychange', onVisible)
-    return () => document.removeEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [])
 
   const filtered = useMemo(() => {
@@ -197,11 +205,17 @@ export default function ScansPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1 }}>Scan Dashboard</h1>
-          <p style={{ fontSize: '13px', color: '#555', marginTop: '4px' }}>QR code scan analytics — all products</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#f0f0f0', lineHeight: 1 }}>Scan Dashboard</h1>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: syncing ? '#CC1F28' : '#2a6a2a', background: syncing ? 'rgba(204,31,40,0.08)' : 'rgba(34,197,94,0.08)', border: `1px solid ${syncing ? 'rgba(204,31,40,0.3)' : 'rgba(34,197,94,0.3)'}`, padding: '3px 8px', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: syncing ? '#CC1F28' : '#22c55e', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+              {syncing ? 'Syncing…' : 'Live'}
+            </span>
+          </div>
+          <p style={{ fontSize: '13px', color: '#555', marginTop: '4px' }}>QR code scan analytics — auto-refreshes every 30 seconds</p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={load} style={{ ...inputStyle, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid #383838', padding: '8px 14px' }}>
+          <button onClick={() => load()} style={{ ...inputStyle, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid #383838', padding: '8px 14px' }}>
             {loading ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
             Refresh
           </button>
@@ -359,6 +373,7 @@ export default function ScansPage() {
           </table>
         </div>
       </div>
+      <style>{`@keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.3 } }`}</style>
     </div>
   )
 }
