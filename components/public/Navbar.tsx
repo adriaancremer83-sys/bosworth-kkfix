@@ -40,11 +40,9 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
         </span>
       </div>
 
-      {msdsUrl && (
+      <div className="flex items-center gap-3">
         <a
-          href={msdsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="https://bosworth-demo.vercel.app/products/kk-fix"
           style={{
             border: '1px solid #CC1F28',
             color: '#CC1F28',
@@ -58,6 +56,7 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
             background: 'transparent',
             letterSpacing: '0.5px',
             transition: 'background 150ms, color 150ms',
+            whiteSpace: 'nowrap',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#CC1F28'
@@ -67,10 +66,41 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
             e.currentTarget.style.background = 'transparent'
             e.currentTarget.style.color = '#CC1F28'
           }}>
-          <Download size={12} />
-          SDS
+          ← GO TO BOSWORTH
         </a>
-      )}
+
+        {msdsUrl && (
+          <a
+            href={msdsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              border: '1px solid #CC1F28',
+              color: '#CC1F28',
+              padding: '7px 16px',
+              fontSize: '12px',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              textDecoration: 'none',
+              background: 'transparent',
+              letterSpacing: '0.5px',
+              transition: 'background 150ms, color 150ms',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#CC1F28'
+              e.currentTarget.style.color = '#fff'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#CC1F28'
+            }}>
+            <Download size={12} />
+            SDS
+          </a>
+        )}
+      </div>
     </nav>
   )
 }
