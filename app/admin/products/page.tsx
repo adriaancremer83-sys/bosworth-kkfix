@@ -10,7 +10,7 @@ export default async function AdminProductsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-end gap-3">
-          <h1 className="font-display text-5xl tracking-wide" style={{ color: '#F5F5F0' }}>Products</h1>
+          <h1 style={{ fontSize: '28px', fontWeight: 700, color: '#F5F5F0', lineHeight: 1 }}>Products</h1>
           <span className="mb-1 px-2 py-0.5 rounded text-sm"
             style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)', color: '#CC1F28' }}>
             {products.length}

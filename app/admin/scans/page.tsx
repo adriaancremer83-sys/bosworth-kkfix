@@ -62,7 +62,7 @@ function StatCard({ label, value, icon: Icon, sub }: {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
         <div style={{ minWidth: 0, flex: 1 }}>
           <p style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>{label}</p>
-          <p style={{
+          <p title={String(value)} style={{
             fontSize: isString ? 'clamp(16px, 4vw, 28px)' : '32px',
             fontWeight: 700, color: '#f0f0f0', lineHeight: 1.1,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
@@ -306,8 +306,14 @@ export default function ScansPage() {
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '700px' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #1e1e1e' }}>
-                {['Timestamp', 'Location', 'Device', 'Batch / Unit', 'IP'].map(h => (
-                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
+                {([
+                  ['Timestamp',   '160px'],
+                  ['Location',    undefined],
+                  ['Device',      '100px'],
+                  ['Batch / Unit','140px'],
+                  ['IP',          '130px'],
+                ] as [string, string | undefined][]).map(([h, w]) => (
+                  <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, width: w }}>
                     {h}
                   </th>
                 ))}
