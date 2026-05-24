@@ -1,11 +1,12 @@
 ﻿'use client'
 
 import { motion } from 'framer-motion'
-import { Play } from 'lucide-react'
 
 interface VideoEmbedProps {
   videoUrl: string | null
 }
+
+const LOCAL_INSTRUCTIONS_VIDEO = '/video/kk-fix-instructions.mp4'
 
 // Accept watch URLs, short URLs, or already-correct embed URLs
 function toEmbedUrl(url: string): string {
@@ -17,7 +18,13 @@ function toEmbedUrl(url: string): string {
   return url
 }
 
+function isMp4(url: string): boolean {
+  return url.endsWith('.mp4') || url.includes('.mp4?')
+}
+
 export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
+  const resolvedUrl = videoUrl ?? LOCAL_INSTRUCTIONS_VIDEO
+
   return (
     <section style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -54,39 +61,20 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
             border: '1px solid #1e1e1e',
             overflow: 'hidden',
           }}>
-          {videoUrl ? (
+          {isMp4(resolvedUrl) ? (
+            <video
+              src={resolvedUrl}
+              controls
+              playsInline
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
+            />
+          ) : (
             <iframe
-              src={toEmbedUrl(videoUrl)}
+              src={toEmbedUrl(resolvedUrl)}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none' }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          ) : (
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '16px',
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                border: '2px solid #CC1F28',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <Play size={24} style={{ color: '#CC1F28', marginLeft: '3px' }} />
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '13px', fontWeight: 600, color: '#f0f0f0', letterSpacing: '2px', textTransform: 'uppercase' }}>Instructional Video</p>
-                <p style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>Coming Soon</p>
-              </div>
-            </div>
           )}
         </motion.div>
       </div>
