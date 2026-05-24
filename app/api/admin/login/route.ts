@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 async function hashToken(password: string): Promise<string> {
   const data = new TextEncoder().encode(password + 'kk-fix-session-v1')
   const buf  = await crypto.subtle.digest('SHA-256', data)
