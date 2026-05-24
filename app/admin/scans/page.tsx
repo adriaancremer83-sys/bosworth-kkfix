@@ -307,12 +307,12 @@ export default function ScansPage() {
             <thead>
               <tr style={{ borderBottom: '1px solid #1e1e1e' }}>
                 {([
-                  ['Timestamp',   '160px'],
-                  ['Location',    undefined],
-                  ['Device',      '100px'],
-                  ['Batch / Unit','140px'],
-                  ['IP',          '130px'],
-                ] as [string, string | undefined][]).map(([h, w]) => (
+                  ['Timestamp',   '18%'],
+                  ['Location',    '30%'],
+                  ['Device',      '13%'],
+                  ['Batch / Unit','20%'],
+                  ['IP',          '19%'],
+                ] as [string, string][]).map(([h, w]) => (
                   <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, width: w }}>
                     {h}
                   </th>
