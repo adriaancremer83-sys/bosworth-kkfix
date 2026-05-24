@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef } from 'react'
 
@@ -92,8 +92,8 @@ export default function ScanMap({ points }: ScanMapProps) {
       valid.forEach(p => {
         const marker = L.circleMarker([p.lat, p.lng], {
           radius: 7,
-          color: '#E8650A',
-          fillColor: '#E8650A',
+          color: '#CC1F28',
+          fillColor: '#CC1F28',
           fillOpacity: 0.8,
           weight: 1.5,
         })

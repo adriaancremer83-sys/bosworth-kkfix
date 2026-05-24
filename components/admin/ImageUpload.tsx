@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Upload, Loader2, RefreshCw, X } from 'lucide-react'
@@ -83,7 +83,7 @@ export default function ImageUpload({
         </p>
       )}
       {error && (
-        <p style={{ fontSize: '11px', color: '#E8650A', marginBottom: '4px' }}>{error}</p>
+        <p style={{ fontSize: '11px', color: '#CC1F28', marginBottom: '4px' }}>{error}</p>
       )}
 
       {value ? (
@@ -122,14 +122,14 @@ export default function ImageUpload({
           {/* progress bar */}
           {uploading && (
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '3px', background: '#1a1a1a' }}>
-              <div style={{ height: '100%', background: '#E8650A', width: `${progress}%`, transition: 'width 200ms' }} />
+              <div style={{ height: '100%', background: '#CC1F28', width: `${progress}%`, transition: 'width 200ms' }} />
             </div>
           )}
         </div>
       ) : (
         <label
           style={boxStyle}
-          onMouseEnter={e => { if (!uploading) { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' } }}
+          onMouseEnter={e => { if (!uploading) { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' } }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#555' }}>
           {uploading
             ? <><Loader2 size={20} className="animate-spin" /><span style={{ fontSize: '11px' }}>Uploading…</span></>
@@ -139,7 +139,7 @@ export default function ImageUpload({
           {/* progress bar */}
           {uploading && (
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '3px', background: '#1a1a1a' }}>
-              <div style={{ height: '100%', background: '#E8650A', width: `${progress}%`, transition: 'width 200ms' }} />
+              <div style={{ height: '100%', background: '#CC1F28', width: `${progress}%`, transition: 'width 200ms' }} />
             </div>
           )}
         </label>

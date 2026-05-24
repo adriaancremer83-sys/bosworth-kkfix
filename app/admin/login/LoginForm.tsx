@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -70,7 +70,7 @@ export default function LoginForm() {
         animation: shake ? 'shake 0.4s ease' : 'none',
       }}>
         {/* Orange top rule */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#E8650A' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#CC1F28' }} />
 
         {/* Logo + brand */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -84,7 +84,7 @@ export default function LoginForm() {
               priority
             />
           </div>
-          <p className="font-display" style={{ fontSize: '13px', color: '#E8650A', letterSpacing: '4px', textTransform: 'uppercase' }}>
+          <p className="font-display" style={{ fontSize: '13px', color: '#CC1F28', letterSpacing: '4px', textTransform: 'uppercase' }}>
             KK-FIX Admin
           </p>
           <div style={{ width: '40px', height: '2px', background: '#1e1e1e', margin: '12px auto 0' }} />
@@ -102,8 +102,8 @@ export default function LoginForm() {
               alignItems: 'center',
               gap: '8px',
             }}>
-              <Lock size={13} style={{ color: '#E8650A', flexShrink: 0 }} />
-              <p style={{ fontSize: '13px', color: '#E8650A' }}>{error}</p>
+              <Lock size={13} style={{ color: '#CC1F28', flexShrink: 0 }} />
+              <p style={{ fontSize: '13px', color: '#CC1F28' }}>{error}</p>
             </div>
           )}
 
@@ -131,7 +131,7 @@ export default function LoginForm() {
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms',
                 }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                 onBlur={e => { e.currentTarget.style.borderColor = error ? 'rgba(232,101,10,0.4)' : '#2a2a2a' }}
               />
               <button
@@ -151,7 +151,7 @@ export default function LoginForm() {
             type="submit"
             disabled={loading || !password.trim()}
             style={{
-              width: '100%', background: loading || !password.trim() ? '#1a1a1a' : '#E8650A',
+              width: '100%', background: loading || !password.trim() ? '#1a1a1a' : '#CC1F28',
               color: loading || !password.trim() ? '#444' : '#fff',
               border: 'none', padding: '13px',
               fontSize: '13px', fontWeight: 600, letterSpacing: '1.5px',
@@ -161,7 +161,7 @@ export default function LoginForm() {
               fontFamily: 'Inter, sans-serif',
             }}
             onMouseEnter={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#C4530A' }}
-            onMouseLeave={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#E8650A' }}>
+            onMouseLeave={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#CC1F28' }}>
             {loading ? <><Loader2 size={14} className="animate-spin" /> Signing in…</> : 'Sign In'}
           </button>
         </form>

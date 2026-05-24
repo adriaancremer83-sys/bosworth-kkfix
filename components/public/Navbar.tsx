@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Download } from 'lucide-react'
 import Image from 'next/image'
@@ -15,7 +15,7 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
       style={{
         background: 'rgba(10,10,10,0.95)',
         backdropFilter: 'blur(12px)',
-        borderBottom: '2px solid #E8650A',
+        borderBottom: '2px solid #CC1F28',
         height: '64px',
       }}>
       <div className="flex items-center gap-4">
@@ -31,7 +31,7 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
         <div style={{ width: '1px', height: '20px', background: '#2a2a2a' }} />
         <span
           className="font-display"
-          style={{ fontSize: '15px', letterSpacing: '2px', color: '#E8650A', textTransform: 'uppercase' }}>
+          style={{ fontSize: '15px', letterSpacing: '2px', color: '#CC1F28', textTransform: 'uppercase' }}>
           KK-FIX
         </span>
         <div style={{ width: '1px', height: '20px', background: '#2a2a2a' }} />
@@ -46,8 +46,8 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            border: '1px solid #E8650A',
-            color: '#E8650A',
+            border: '1px solid #CC1F28',
+            color: '#CC1F28',
             padding: '7px 16px',
             fontSize: '12px',
             fontWeight: 500,
@@ -60,12 +60,12 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
             transition: 'background 150ms, color 150ms',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = '#E8650A'
+            e.currentTarget.style.background = '#CC1F28'
             e.currentTarget.style.color = '#fff'
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = '#E8650A'
+            e.currentTarget.style.color = '#CC1F28'
           }}>
           <Download size={12} />
           SDS

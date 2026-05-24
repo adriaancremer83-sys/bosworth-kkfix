@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -18,7 +18,7 @@ const navLinks = [
   { href: '/admin/scans',    icon: ScanLine,        label: 'Scan Dashboard',  exact: false },
 ]
 
-const ORANGE = '#E8650A'
+const ORANGE = '#CC1F28'
 
 export default function AdminSidebar({ userEmail, onClose }: AdminSidebarProps) {
   const pathname = usePathname()

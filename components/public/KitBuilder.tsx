@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,10 +7,13 @@ import { ChevronRight, ChevronLeft, Download, RotateCcw, CheckCircle2, MessageCi
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface Selection {
-  damageType: string
-  beltWidth:  string
-  damageArea: number
-  surface:    string[]
+  damageType:  string
+  beltWidth:   string
+  damageArea:  number
+  lengthMm:    string
+  widthMm:     string
+  areaUnknown: boolean
+  surface:     string[]
 }
 
 // ─── Step data ───────────────────────────────────────────────────────────────
@@ -36,6 +39,13 @@ const SURFACES = [
   { id: 'rough',    label: 'Rough / Sandy' },
   { id: 'repaired', label: 'Previously Repaired' },
 ]
+
+// ─── Area format helper ───────────────────────────────────────────────────────
+
+function fmtArea(s: Selection): string {
+  if (s.areaUnknown) return 'Not measured (medium estimate used)'
+  return `${s.lengthMm} × ${s.widthMm} mm (${s.damageArea} cm²)`
+}
 
 // ─── Bag quantity calculator ──────────────────────────────────────────────────
 
@@ -116,7 +126,7 @@ function buildWhatsAppUrl(sel: Selection, rec: Recommendation, bags: string): st
     `*Recommended Quantity:* ${bags} bag(s)\n\n` +
     `*Damage Type:* ${damage}\n` +
     `*Belt Width:* ${sel.beltWidth}\n` +
-    `*Damage Area:* ${sel.damageArea} cm²\n` +
+    `*Damage Area:* ${fmtArea(sel)}\n` +
     `*Surface:* ${surfaces}\n\n` +
     `Please assist with the order.`
   return `https://wa.me/27733701457?text=${encodeURIComponent(msg)}`
@@ -134,7 +144,7 @@ function buildEmailUrl(sel: Selection, rec: Recommendation, bags: string): strin
     `Assessment Details:\n` +
     `- Damage Type: ${damage}\n` +
     `- Belt Width: ${sel.beltWidth}\n` +
-    `- Damage Area: ${sel.damageArea} cm²\n` +
+    `- Damage Area: ${fmtArea(sel)}\n` +
     `- Surface Condition: ${surfaces}\n\n` +
     `Recommended Kit Contents:\n` +
     rec.items.map(item => `- ${item}`).join('\n') +
@@ -189,7 +199,7 @@ async function generatePDF(sel: Selection, rec: Recommendation) {
   const damageLabel = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
   row('Damage Type', damageLabel)
   row('Belt Width',  sel.beltWidth)
-  row('Damage Area', `${sel.damageArea} cm²`)
+  row('Damage Area', fmtArea(sel))
   row('Surface',     sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean')
   row('Recommended Qty', `${getRecommendedBags(sel)} bag(s)`)
   y += 4
@@ -246,7 +256,7 @@ function slideVariants(dir: 1 | -1) {
 function answerCardStyle(selected: boolean): React.CSSProperties {
   return {
     background:  selected ? 'rgba(232,101,10,0.10)' : '#111111',
-    border:      `1.5px solid ${selected ? '#E8650A' : '#2a2a2a'}`,
+    border:      `1.5px solid ${selected ? '#CC1F28' : '#2a2a2a'}`,
     padding:     '18px',
     textAlign:   'left',
     cursor:      'pointer',
@@ -267,16 +277,19 @@ export default function KitBuilder() {
   const [generating, setGen] = useState(false)
 
   const [sel, setSel] = useState<Selection>({
-    damageType: '',
-    beltWidth:  '',
-    damageArea: 50,
-    surface:    [],
+    damageType:  '',
+    beltWidth:   '',
+    damageArea:  0,
+    lengthMm:    '',
+    widthMm:     '',
+    areaUnknown: false,
+    surface:     [],
   })
 
   const canNext = [
     !!sel.damageType,
     !!sel.beltWidth,
-    true,
+    sel.areaUnknown || sel.damageArea > 0,
     sel.surface.length > 0,
   ][step]
 
@@ -288,7 +301,7 @@ export default function KitBuilder() {
   }
 
   function reset() {
-    setSel({ damageType: '', beltWidth: '', damageArea: 50, surface: [] })
+    setSel({ damageType: '', beltWidth: '', damageArea: 0, lengthMm: '', widthMm: '', areaUnknown: false, surface: [] })
     setStep(0); setDir(1); setDone(false)
   }
 
@@ -315,7 +328,7 @@ export default function KitBuilder() {
 
         {/* Section header */}
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
-          <p style={{ fontSize: '11px', color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px', fontWeight: 500 }}>Tool</p>
+          <p style={{ fontSize: '11px', color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px', fontWeight: 500 }}>Tool</p>
           <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
             Kit Builder
           </h2>
@@ -337,16 +350,16 @@ export default function KitBuilder() {
                       width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '11px', fontWeight: 700,
-                      background: i < step ? '#E8650A' : i === step ? 'rgba(232,101,10,0.2)' : '#1a1a1a',
-                      border: `1.5px solid ${i <= step ? '#E8650A' : '#2a2a2a'}`,
-                      color: i < step ? '#fff' : i === step ? '#E8650A' : '#444',
+                      background: i < step ? '#CC1F28' : i === step ? 'rgba(232,101,10,0.2)' : '#1a1a1a',
+                      border: `1.5px solid ${i <= step ? '#CC1F28' : '#2a2a2a'}`,
+                      color: i < step ? '#fff' : i === step ? '#CC1F28' : '#444',
                       transition: 'all 250ms',
                     }}>
                       {i < step ? <CheckCircle2 size={12} /> : i + 1}
                     </div>
                     <span style={{ fontSize: '11px', color: i === step ? '#f0f0f0' : '#444', whiteSpace: 'nowrap', display: 'none' }} className="sm:inline">{label}</span>
                     {i < TOTAL_STEPS - 1 && (
-                      <div style={{ flex: 1, height: '1px', background: i < step ? '#E8650A' : '#1e1e1e', margin: '0 6px', transition: 'background 250ms' }} />
+                      <div style={{ flex: 1, height: '1px', background: i < step ? '#CC1F28' : '#1e1e1e', margin: '0 6px', transition: 'background 250ms' }} />
                     )}
                   </div>
                 ))}
@@ -355,7 +368,7 @@ export default function KitBuilder() {
                 <motion.div
                   animate={{ width: `${(step / (TOTAL_STEPS - 1)) * 100}%` }}
                   transition={{ duration: 0.3 }}
-                  style={{ height: '100%', background: '#E8650A' }}
+                  style={{ height: '100%', background: '#CC1F28' }}
                 />
               </div>
             </div>
@@ -380,9 +393,9 @@ export default function KitBuilder() {
                           onMouseEnter={e => { if (!selected) e.currentTarget.style.borderColor = '#444' }}
                           onMouseLeave={e => { if (!selected) e.currentTarget.style.borderColor = '#2a2a2a' }}>
                           {selected && (
-                            <CheckCircle2 size={14} style={{ color: '#E8650A', position: 'absolute', top: '12px', right: '12px' }} />
+                            <CheckCircle2 size={14} style={{ color: '#CC1F28', position: 'absolute', top: '12px', right: '12px' }} />
                           )}
-                          <p style={{ fontSize: '14px', fontWeight: 600, color: selected ? '#E8650A' : '#f0f0f0', marginBottom: '6px', paddingRight: '20px' }}>
+                          <p style={{ fontSize: '14px', fontWeight: 600, color: selected ? '#CC1F28' : '#f0f0f0', marginBottom: '6px', paddingRight: '20px' }}>
                             {d.label}
                           </p>
                           <p style={{ fontSize: '11px', color: '#555', lineHeight: 1.4 }}>{d.desc}</p>
@@ -404,10 +417,10 @@ export default function KitBuilder() {
                       value={sel.beltWidth}
                       onChange={e => setSel(p => ({ ...p, beltWidth: e.target.value }))}
                       style={{
-                        width: '100%', background: '#111', border: `1.5px solid ${sel.beltWidth ? '#E8650A' : '#2a2a2a'}`,
+                        width: '100%', background: '#111', border: `1.5px solid ${sel.beltWidth ? '#CC1F28' : '#2a2a2a'}`,
                         color: sel.beltWidth ? '#f0f0f0' : '#555', padding: '14px 16px',
                         fontSize: '15px', outline: 'none', cursor: 'pointer', appearance: 'none',
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E8650A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23CC1F28' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
                         backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center',
                       }}>
                       <option value="" disabled>Select belt width…</option>
@@ -423,42 +436,76 @@ export default function KitBuilder() {
               {/* ── Step 2: Damage area ── */}
               {!done && step === 2 && (
                 <motion.div key="s2" variants={slideVariants(direction)} initial="enter" animate="center" exit="exit" transition={{ duration: 0.25, ease: 'easeInOut' }}>
-                  <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '20px', letterSpacing: '1px' }}>
-                    WHAT IS THE DAMAGE AREA?
+                  <p className="font-display" style={{ fontSize: '20px', color: '#f0f0f0', marginBottom: '6px', letterSpacing: '1px' }}>
+                    WHAT IS THE DAMAGE SIZE?
                   </p>
-                  <div style={{ maxWidth: '480px' }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '24px' }}>
-                      <span className="font-display" style={{ fontSize: '64px', color: '#E8650A', lineHeight: 1 }}>
-                        {sel.damageArea}
-                      </span>
-                      <span style={{ fontSize: '18px', color: '#8a9ab0' }}>cm²</span>
-                    </div>
-                    <input
-                      type="range" min={5} max={300} step={5} value={sel.damageArea}
-                      onChange={e => setSel(p => ({ ...p, damageArea: Number(e.target.value) }))}
-                      style={{ width: '100%', accentColor: '#E8650A', height: '4px', cursor: 'pointer' }}
-                    />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#444', marginTop: '6px' }}>
-                      <span>5 cm²</span><span>150 cm²</span><span>300 cm²</span>
-                    </div>
-                    <div style={{ marginTop: '20px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {[
-                        { label: 'Small',  val: 20,  desc: '< 20 cm²' },
-                        { label: 'Medium', val: 75,  desc: '20–100 cm²' },
-                        { label: 'Large',  val: 175, desc: '100–250 cm²' },
-                        { label: 'Major',  val: 280, desc: '> 250 cm²' },
-                      ].map(preset => (
-                        <button key={preset.label} type="button" onClick={() => setSel(p => ({ ...p, damageArea: preset.val }))}
-                          style={{
-                            background: 'transparent', border: '1px solid #2a2a2a', color: '#8a9ab0',
-                            padding: '6px 14px', fontSize: '12px', cursor: 'pointer', transition: 'all 150ms',
-                          }}
-                          onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
-                          onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#8a9ab0' }}>
-                          {preset.label} <span style={{ fontSize: '10px', opacity: 0.6 }}>{preset.desc}</span>
-                        </button>
+                  <p style={{ fontSize: '13px', color: '#555', marginBottom: '24px' }}>Measure the damaged area on the belt surface.</p>
+                  <div style={{ maxWidth: '420px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                      {([
+                        { key: 'lengthMm' as const, label: 'Length (mm)', placeholder: 'e.g. 150' },
+                        { key: 'widthMm'  as const, label: 'Width (mm)',  placeholder: 'e.g. 80'  },
+                      ]).map(({ key, label, placeholder }) => (
+                        <div key={key}>
+                          <label style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+                            {label}
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            placeholder={placeholder}
+                            value={sel[key]}
+                            onChange={e => {
+                              const val = e.target.value
+                              setSel(p => {
+                                const l = key === 'lengthMm' ? val : p.lengthMm
+                                const w = key === 'widthMm'  ? val : p.widthMm
+                                const fl = parseFloat(l), fw = parseFloat(w)
+                                const area = (fl > 0 && fw > 0) ? Math.round(fl * fw / 100) : 0
+                                return { ...p, [key]: val, areaUnknown: false, damageArea: area }
+                              })
+                            }}
+                            style={{
+                              width: '100%', background: '#111', boxSizing: 'border-box',
+                              border: `1.5px solid ${sel[key] && !sel.areaUnknown ? '#CC1F28' : '#2a2a2a'}`,
+                              color: '#f0f0f0', padding: '14px 16px', fontSize: '15px', outline: 'none',
+                            }}
+                          />
+                        </div>
                       ))}
                     </div>
+
+                    {/* Live area display */}
+                    {sel.damageArea > 0 && !sel.areaUnknown && (
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '16px', padding: '12px 16px', background: 'rgba(204,31,40,0.07)', border: '1px solid rgba(204,31,40,0.2)' }}>
+                        <span style={{ fontSize: '13px', color: '#8a9ab0' }}>Area:</span>
+                        <span className="font-display" style={{ fontSize: '28px', color: '#CC1F28', lineHeight: 1 }}>{sel.damageArea}</span>
+                        <span style={{ fontSize: '14px', color: '#8a9ab0' }}>cm²</span>
+                      </div>
+                    )}
+
+                    {/* Not sure option */}
+                    <button
+                      type="button"
+                      onClick={() => setSel(p => ({ ...p, areaUnknown: true, lengthMm: '', widthMm: '', damageArea: 150 }))}
+                      style={{
+                        width: '100%', background: sel.areaUnknown ? 'rgba(204,31,40,0.10)' : 'transparent',
+                        border: `1.5px solid ${sel.areaUnknown ? '#CC1F28' : '#2a2a2a'}`,
+                        color: sel.areaUnknown ? '#CC1F28' : '#8a9ab0',
+                        padding: '10px 20px', fontSize: '13px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 150ms',
+                      }}
+                      onMouseEnter={e => { if (!sel.areaUnknown) { e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.color = '#f0f0f0' } }}
+                      onMouseLeave={e => { if (!sel.areaUnknown) { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#8a9ab0' } }}
+                    >
+                      {sel.areaUnknown && <CheckCircle2 size={14} />}
+                      Not sure — I&apos;ll estimate
+                    </button>
+                    {sel.areaUnknown && (
+                      <p style={{ fontSize: '11px', color: '#555', marginTop: '8px', textAlign: 'center' }}>
+                        A medium damage estimate will be used for recommendations.
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -477,8 +524,8 @@ export default function KitBuilder() {
                         <button key={s.id} type="button" onClick={() => toggleSurface(s.id)}
                           style={{
                             background: active ? 'rgba(232,101,10,0.12)' : 'transparent',
-                            border: `1.5px solid ${active ? '#E8650A' : '#2a2a2a'}`,
-                            color: active ? '#E8650A' : '#8a9ab0',
+                            border: `1.5px solid ${active ? '#CC1F28' : '#2a2a2a'}`,
+                            color: active ? '#CC1F28' : '#8a9ab0',
                             padding: '10px 20px', fontSize: '14px', cursor: 'pointer',
                             display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 150ms',
                           }}>
@@ -500,12 +547,12 @@ export default function KitBuilder() {
                   {/* Top row: title + PDF */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
                     <div>
-                      <p style={{ fontSize: '11px', color: '#E8650A', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>Recommendation</p>
+                      <p style={{ fontSize: '11px', color: '#CC1F28', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>Recommendation</p>
                       <h3 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1, marginBottom: '4px' }}>
                         {rec.kit}
                       </h3>
                       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px' }}>
-                        <span style={{ background: 'rgba(232,101,10,0.12)', border: '1px solid rgba(232,101,10,0.3)', color: '#E8650A', padding: '4px 12px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>
+                        <span style={{ background: 'rgba(232,101,10,0.12)', border: '1px solid rgba(232,101,10,0.3)', color: '#CC1F28', padding: '4px 12px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>
                           {rec.grade.toUpperCase()}
                         </span>
                         <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
@@ -515,14 +562,14 @@ export default function KitBuilder() {
                     </div>
                     <button onClick={downloadPDF} disabled={generating}
                       style={{
-                        background: generating ? '#1a1a1a' : '#E8650A', color: generating ? '#555' : '#fff',
+                        background: generating ? '#1a1a1a' : '#CC1F28', color: generating ? '#555' : '#fff',
                         border: 'none', padding: '12px 24px', fontSize: '13px', fontWeight: 600,
                         cursor: generating ? 'not-allowed' : 'pointer',
                         display: 'flex', alignItems: 'center', gap: '8px',
                         transition: 'background 150ms', flexShrink: 0,
                       }}
                       onMouseEnter={e => { if (!generating) e.currentTarget.style.background = '#C4530A' }}
-                      onMouseLeave={e => { if (!generating) e.currentTarget.style.background = generating ? '#1a1a1a' : '#E8650A' }}>
+                      onMouseLeave={e => { if (!generating) e.currentTarget.style.background = generating ? '#1a1a1a' : '#CC1F28' }}>
                       <Download size={14} />
                       {generating ? 'Generating…' : 'Download PDF'}
                     </button>
@@ -530,9 +577,9 @@ export default function KitBuilder() {
 
                   {/* Recommended quantity */}
                   <div style={{ marginBottom: '20px', padding: '16px 20px', background: 'rgba(232,101,10,0.07)', border: '1.5px solid rgba(232,101,10,0.25)' }}>
-                    <p style={{ fontSize: '11px', color: '#E8650A', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Recommended Quantity</p>
-                    <p className="font-display" style={{ fontSize: '36px', color: '#E8650A', lineHeight: 1 }}>
-                      {bags} <span style={{ fontSize: '18px', color: '#E8650A', opacity: 0.7 }}>bag{bags === '1' ? '' : 's'}</span>
+                    <p style={{ fontSize: '11px', color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Recommended Quantity</p>
+                    <p className="font-display" style={{ fontSize: '36px', color: '#CC1F28', lineHeight: 1 }}>
+                      {bags} <span style={{ fontSize: '18px', color: '#CC1F28', opacity: 0.7 }}>bag{bags === '1' ? '' : 's'}</span>
                     </p>
                   </div>
 
@@ -549,7 +596,7 @@ export default function KitBuilder() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {rec.items.map((item, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: '#8a9ab0' }}>
-                            <div style={{ width: '6px', height: '6px', background: '#E8650A', borderRadius: '50%', marginTop: '5px', flexShrink: 0 }} />
+                            <div style={{ width: '6px', height: '6px', background: '#CC1F28', borderRadius: '50%', marginTop: '5px', flexShrink: 0 }} />
                             {item}
                           </div>
                         ))}
@@ -560,7 +607,7 @@ export default function KitBuilder() {
                         <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px', fontWeight: 700 }}>Application Notes</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {rec.notes.map((note, i) => (
-                            <p key={i} style={{ fontSize: '12px', color: '#8a9ab0', lineHeight: 1.55, borderLeft: '2px solid #E8650A', paddingLeft: '10px' }}>
+                            <p key={i} style={{ fontSize: '12px', color: '#8a9ab0', lineHeight: 1.55, borderLeft: '2px solid #CC1F28', paddingLeft: '10px' }}>
                               {note}
                             </p>
                           ))}
@@ -596,13 +643,13 @@ export default function KitBuilder() {
                         style={{
                           display: 'inline-flex', alignItems: 'center', gap: '8px',
                           background: 'transparent',
-                          border: '1.5px solid #E8650A', color: '#E8650A',
+                          border: '1.5px solid #CC1F28', color: '#CC1F28',
                           padding: '12px 24px', fontSize: '14px', fontWeight: 600,
                           textDecoration: 'none', transition: 'background 150ms, color 150ms',
                           letterSpacing: '0.3px',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#E8650A'; e.currentTarget.style.color = '#fff' }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#E8650A' }}>
+                        onMouseEnter={e => { e.currentTarget.style.background = '#CC1F28'; e.currentTarget.style.color = '#fff' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#CC1F28' }}>
                         <Mail size={16} />
                         Order via Email
                       </a>
@@ -622,7 +669,7 @@ export default function KitBuilder() {
               <>
                 <button onClick={reset}
                   style={{ background: 'transparent', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '10px 20px', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 150ms' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#8a9ab0' }}>
                   <RotateCcw size={13} /> Start Over
                 </button>
@@ -649,14 +696,14 @@ export default function KitBuilder() {
                   onClick={() => canNext && go(1)}
                   whileTap={canNext ? { scale: 0.97 } : {}}
                   style={{
-                    background: canNext ? '#E8650A' : '#1a1a1a',
+                    background: canNext ? '#CC1F28' : '#1a1a1a',
                     border: 'none', color: canNext ? '#fff' : '#333',
                     padding: '10px 24px', fontSize: '13px', fontWeight: 600,
                     cursor: canNext ? 'pointer' : 'not-allowed',
                     display: 'flex', alignItems: 'center', gap: '6px', transition: 'background 150ms',
                   }}
                   onMouseEnter={e => { if (canNext) e.currentTarget.style.background = '#C4530A' }}
-                  onMouseLeave={e => { if (canNext) e.currentTarget.style.background = '#E8650A' }}>
+                  onMouseLeave={e => { if (canNext) e.currentTarget.style.background = '#CC1F28' }}>
                   {step === TOTAL_STEPS - 1 ? 'Get Recommendation' : 'Next'} <ChevronRight size={14} />
                 </motion.button>
               </>

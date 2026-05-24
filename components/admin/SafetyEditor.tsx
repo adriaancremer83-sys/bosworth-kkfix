@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { X, PlusCircle } from 'lucide-react'
 import type { SafetyItem } from '@/lib/types'
@@ -23,7 +23,7 @@ const inputStyle = {
 }
 
 const typeColors: Record<string, { color: string; label: string }> = {
-  hazard: { color: '#E8650A', label: 'Hazard' },
+  hazard: { color: '#CC1F28', label: 'Hazard' },
   ppe: { color: '#60a5fa', label: 'PPE' },
   warning: { color: '#D97706', label: 'Warning' },
   disposal: { color: '#16A34A', label: 'Disposal' },
@@ -53,7 +53,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
           return (
             <div key={item._key} className="p-3 rounded-lg" style={{ background: '#0A0A0A', border: `1px solid ${typeColor}33` }}>
               <div className="flex justify-end mb-2">
-                <button type="button" onClick={() => remove(item._key!)} className="p-1 rounded" style={{ color: '#E8650A' }}>
+                <button type="button" onClick={() => remove(item._key!)} className="p-1 rounded" style={{ color: '#CC1F28' }}>
                   <X size={14} />
                 </button>
               </div>
@@ -72,7 +72,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
                   value={item.icon ?? ''}
                   onChange={e => update(item._key!, 'icon', e.target.value)}
                   style={inputStyle}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                  onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                   onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                 />
                 <input
@@ -80,7 +80,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
                   value={item.label ?? ''}
                   onChange={e => update(item._key!, 'label', e.target.value)}
                   style={inputStyle}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                  onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                   onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                 />
                 <input
@@ -88,7 +88,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
                   value={item.description ?? ''}
                   onChange={e => update(item._key!, 'description', e.target.value)}
                   style={inputStyle}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                  onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                   onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                 />
               </div>
@@ -101,7 +101,7 @@ export default function SafetyEditor({ items, onChange }: SafetyEditorProps) {
         onClick={add}
         className="flex items-center gap-2 px-4 py-2 rounded text-sm"
         style={{ border: '1px dashed #383838', color: '#8A8A8A', background: 'transparent', width: '100%', justifyContent: 'center' }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' }}>
         <PlusCircle size={14} />
         Add Safety Item

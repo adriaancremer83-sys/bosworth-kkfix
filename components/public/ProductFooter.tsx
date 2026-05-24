@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Image from 'next/image'
 
@@ -16,14 +16,14 @@ export default function ProductFooter() {
             />
           </div>
           <div style={{ height: '1px', flex: 1, background: '#1a1a1a' }} />
-          <span className="font-display" style={{ fontSize: '14px', color: '#E8650A', letterSpacing: '3px' }}>KK-FIX</span>
+          <span className="font-display" style={{ fontSize: '14px', color: '#CC1F28', letterSpacing: '3px' }}>KK-FIX</span>
         </div>
 
-        <div style={{ height: '2px', background: '#E8650A', margin: '20px 0 32px 0', maxWidth: '120px' }} />
+        <div style={{ height: '2px', background: '#CC1F28', margin: '20px 0 32px 0', maxWidth: '120px' }} />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px', marginBottom: '40px' }}>
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Address
             </p>
             <p style={{ fontSize: '13px', color: '#555', lineHeight: 1.9 }}>
@@ -34,7 +34,7 @@ export default function ProductFooter() {
           </div>
 
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Contact
             </p>
             <p style={{ fontSize: '13px', lineHeight: 1.9 }}>
@@ -49,7 +49,7 @@ export default function ProductFooter() {
           </div>
 
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+            <p style={{ fontSize: '10px', fontWeight: 700, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
               Certifications
             </p>
             <p className="font-mono-tech" style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}>
@@ -79,7 +79,7 @@ export default function ProductFooter() {
             <a
               href="/admin/products"
               style={{ fontSize: '11px', color: '#333', textDecoration: 'none', transition: 'color 150ms' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#E8650A' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#CC1F28' }}
               onMouseLeave={e => { e.currentTarget.style.color = '#333' }}>
               Admin
             </a>

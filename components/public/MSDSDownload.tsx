@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import { Download } from 'lucide-react'
@@ -16,7 +16,7 @@ export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.4 }}>
-          <p style={{ fontSize: '11px', color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px', fontWeight: 500 }}>
+          <p style={{ fontSize: '11px', color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px', fontWeight: 500 }}>
             Documentation
           </p>
           <h2 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1 }}>
@@ -46,7 +46,7 @@ export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
-                background: '#E8650A',
+                background: '#CC1F28',
                 color: '#fff',
                 fontSize: '17px',
                 letterSpacing: '2px',
@@ -55,14 +55,14 @@ export default function MSDSDownload({ msdsUrl }: MSDSDownloadProps) {
                 transition: 'background 150ms',
               }}
               onMouseEnter={e => { e.currentTarget.style.background = '#C4530A' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#E8650A' }}>
+              onMouseLeave={e => { e.currentTarget.style.background = '#CC1F28' }}>
               <Download size={16} />
               Download SDS
             </a>
           ) : (
             <div style={{ textAlign: 'right' }}>
               <p style={{ fontSize: '13px', color: '#555', marginBottom: '6px' }}>Contact Bosworth for SDS document</p>
-              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#E8650A', fontSize: '14px', textDecoration: 'none' }}>
+              <a href="mailto:pulleys@bosworth.co.za" style={{ color: '#CC1F28', fontSize: '14px', textDecoration: 'none' }}>
                 pulleys@bosworth.co.za
               </a>
             </div>

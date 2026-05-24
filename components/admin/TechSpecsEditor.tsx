@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { X, PlusCircle } from 'lucide-react'
 
@@ -68,7 +68,7 @@ export default function TechSpecsEditor({ items, onChange }: TechSpecsEditorProp
                     value={item.key}
                     onChange={e => update(item._key, 'key', e.target.value)}
                     style={inputStyle}
-                    onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                   />
                 </td>
@@ -78,13 +78,13 @@ export default function TechSpecsEditor({ items, onChange }: TechSpecsEditorProp
                     value={item.value}
                     onChange={e => update(item._key, 'value', e.target.value)}
                     style={inputStyle}
-                    onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                   />
                 </td>
                 <td style={{ padding: '6px', textAlign: 'center' }}>
                   <button type="button" onClick={() => remove(item._key)}
-                    style={{ color: '#E8650A', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    style={{ color: '#CC1F28', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     <X size={14} />
                   </button>
                 </td>
@@ -102,7 +102,7 @@ export default function TechSpecsEditor({ items, onChange }: TechSpecsEditorProp
           width: '100%', padding: '10px', display: 'flex', alignItems: 'center',
           justifyContent: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer',
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' }}>
         <PlusCircle size={14} />
         Add Row

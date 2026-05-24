@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import {
@@ -27,7 +27,7 @@ function getIcon(iconName: string, type: SafetyItem['type']) {
 }
 
 const typeStyles: Record<SafetyItem['type'], { bg: string; border: string; iconColor: string }> = {
-  hazard:  { bg: 'rgba(232,101,10,0.06)', border: '#E8650A', iconColor: '#E8650A' },
+  hazard:  { bg: 'rgba(232,101,10,0.06)', border: '#CC1F28', iconColor: '#CC1F28' },
   ppe:     { bg: 'rgba(29,78,216,0.06)',  border: '#3b82f6', iconColor: '#3b82f6' },
   warning: { bg: 'rgba(245,158,11,0.06)', border: '#f59e0b', iconColor: '#f59e0b' },
   disposal:{ bg: 'rgba(34,197,94,0.06)',  border: '#22c55e', iconColor: '#22c55e' },
@@ -84,18 +84,18 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4 }}>
-            <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Safety
             </p>
             <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
               Safety Information
             </h2>
-            <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 40px 0' }} />
+            <div style={{ width: '48px', height: '3px', background: '#CC1F28', margin: '16px 0 40px 0' }} />
           </motion.div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px' }}>
             <div>
-              <p style={{ fontSize: '11px', fontWeight: 700, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '11px', fontWeight: 700, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '16px' }}>
                 Hazards &amp; Warnings
               </p>
               {hazardItems.map((item, i) => <SafetyCard key={item.id} item={item} index={i} />)}
@@ -117,7 +117,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.4 }}>
-            <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Emergency
             </p>
             <h3 className="font-display" style={{ fontSize: 'clamp(32px, 4vw, 44px)', color: '#f0f0f0', marginBottom: '32px' }}>

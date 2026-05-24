@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { X, PlusCircle, ChevronUp, ChevronDown } from 'lucide-react'
 import type { Instruction } from '@/lib/types'
@@ -68,7 +68,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
         {items.map((item, i) => (
           <div key={item._key} className="p-4 rounded-lg" style={{ background: '#0A0A0A', border: '1px solid #383838' }}>
             <div className="flex items-center justify-between mb-3">
-              <span className="font-display text-2xl" style={{ color: '#E8650A' }}>STEP {String(i + 1).padStart(2, '0')}</span>
+              <span className="font-display text-2xl" style={{ color: '#CC1F28' }}>STEP {String(i + 1).padStart(2, '0')}</span>
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => moveUp(i)} style={{ color: '#8A8A8A', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
                   <ChevronUp size={14} />
@@ -76,7 +76,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                 <button type="button" onClick={() => moveDown(i)} style={{ color: '#8A8A8A', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
                   <ChevronDown size={14} />
                 </button>
-                <button type="button" onClick={() => remove(item._key!)} style={{ color: '#E8650A', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', marginLeft: '4px' }}>
+                <button type="button" onClick={() => remove(item._key!)} style={{ color: '#CC1F28', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', marginLeft: '4px' }}>
                   <X size={14} />
                 </button>
               </div>
@@ -90,7 +90,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                     value={item.title ?? ''}
                     onChange={e => update(item._key!, 'title', e.target.value)}
                     style={inputStyle}
-                    onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                   />
                 </div>
@@ -100,7 +100,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                     value={item.estimated_time ?? ''}
                     onChange={e => update(item._key!, 'estimated_time', e.target.value || null)}
                     style={inputStyle}
-                    onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                     onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
                   />
                 </div>
@@ -112,7 +112,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
                 value={item.description ?? ''}
                 onChange={e => update(item._key!, 'description', e.target.value)}
                 style={textareaStyle}
-                onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
               />
 
@@ -151,7 +151,7 @@ export default function InstructionsEditor({ items, onChange }: InstructionsEdit
           width: '100%', padding: '10px', display: 'flex', alignItems: 'center',
           justifyContent: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer',
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' }}>
         <PlusCircle size={14} />
         Add Step

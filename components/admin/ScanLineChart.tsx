@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 interface DayCount {
   date: string   // YYYY-MM-DD
@@ -63,11 +63,11 @@ export default function ScanLineChart({ data }: ScanLineChartProps) {
       <path d={fillD} fill="rgba(232,101,10,0.08)" />
 
       {/* Line */}
-      <path d={pathD} fill="none" stroke="#E8650A" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <path d={pathD} fill="none" stroke="#CC1F28" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
 
       {/* Dots */}
       {pts.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#E8650A" />
+        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#CC1F28" />
       ))}
 
       {/* X labels */}

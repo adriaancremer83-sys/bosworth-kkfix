@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -39,13 +39,13 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.4 }}>
-          <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+          <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
             Instructions
           </p>
           <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
             Step-by-Step Guide
           </h2>
-          <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 32px 0' }} />
+          <div style={{ width: '48px', height: '3px', background: '#CC1F28', margin: '16px 0 32px 0' }} />
         </motion.div>
 
         {/* Progress bar */}
@@ -68,7 +68,7 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
             <motion.div
               animate={{ width: `${progressPct}%` }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
-              style={{ height: '100%', background: '#E8650A', borderRadius: '2px' }}
+              style={{ height: '100%', background: '#CC1F28', borderRadius: '2px' }}
             />
           </div>
         </motion.div>
@@ -86,8 +86,8 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
                 transition={{ duration: 0.4, delay: i * 0.06 }}
                 style={{
                   background: '#111111',
-                  border: `1px solid ${isOpen ? '#E8650A' : '#1e1e1e'}`,
-                  borderLeft: `3px solid ${isDone ? '#22c55e' : '#E8650A'}`,
+                  border: `1px solid ${isOpen ? '#CC1F28' : '#1e1e1e'}`,
+                  borderLeft: `3px solid ${isDone ? '#22c55e' : '#CC1F28'}`,
                   transition: 'border-color 200ms',
                   overflow: 'hidden',
                 }}>
@@ -109,7 +109,7 @@ export default function InstructionSteps({ instructions }: InstructionStepsProps
                     className="font-display"
                     style={{
                       fontSize: '32px',
-                      color: isDone ? '#22c55e' : '#E8650A',
+                      color: isDone ? '#22c55e' : '#CC1F28',
                       lineHeight: 1,
                       minWidth: '52px',
                       transition: 'color 200ms',

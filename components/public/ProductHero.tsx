@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -59,7 +59,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
           <span
             className="font-display"
             style={{
-              background: '#E8650A',
+              background: '#CC1F28',
               color: '#FFFFFF',
               fontSize: '12px',
               letterSpacing: '3px',
@@ -105,7 +105,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
           transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
           style={{
             height: '3px',
-            background: '#E8650A',
+            background: '#CC1F28',
             margin: '28px 0',
             transformOrigin: 'left',
             maxWidth: '480px',
@@ -172,7 +172,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
             transition={{ duration: 0.4, delay: 0.55 }}
             className="font-display"
             style={{
-              background: '#E8650A',
+              background: '#CC1F28',
               color: '#fff',
               padding: '14px 32px',
               fontSize: '16px',
@@ -182,7 +182,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
               transition: 'background 150ms',
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#C4530A' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#E8650A' }}>
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#CC1F28' }}>
             VIEW INSTRUCTIONS ↓
           </motion.a>
           <motion.a
@@ -192,8 +192,8 @@ export default function ProductHero({ product }: ProductHeroProps) {
             transition={{ duration: 0.4, delay: 0.62 }}
             className="font-display"
             style={{
-              border: '1px solid #E8650A',
-              color: '#E8650A',
+              border: '1px solid #CC1F28',
+              color: '#CC1F28',
               padding: '14px 32px',
               fontSize: '16px',
               letterSpacing: '2px',
@@ -202,12 +202,12 @@ export default function ProductHero({ product }: ProductHeroProps) {
               transition: 'background 150ms, color 150ms',
             }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.background = '#E8650A'
+              (e.currentTarget as HTMLElement).style.background = '#CC1F28'
               ;(e.currentTarget as HTMLElement).style.color = '#fff'
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.background = 'transparent'
-              ;(e.currentTarget as HTMLElement).style.color = '#E8650A'
+              ;(e.currentTarget as HTMLElement).style.color = '#CC1F28'
             }}>
             BUILD YOUR KIT →
           </motion.a>
@@ -223,7 +223,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
               animate={{ y: [0, 6, 0] }}
               transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
               style={{ display: 'inline-block' }}>
-              <ChevronDown size={24} style={{ color: '#E8650A' }} />
+              <ChevronDown size={24} style={{ color: '#CC1F28' }} />
             </motion.div>
           </motion.div>
         )}

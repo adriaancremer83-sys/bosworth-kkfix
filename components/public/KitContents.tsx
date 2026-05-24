@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import {
@@ -36,7 +36,7 @@ export default function KitContents({ items }: KitContentsProps) {
           <p style={{
             fontSize: '11px',
             fontWeight: 500,
-            color: '#E8650A',
+            color: '#CC1F28',
             textTransform: 'uppercase',
             letterSpacing: '3px',
             marginBottom: '8px',
@@ -50,7 +50,7 @@ export default function KitContents({ items }: KitContentsProps) {
             <span
               className="font-display"
               style={{
-                background: '#E8650A',
+                background: '#CC1F28',
                 color: '#fff',
                 fontSize: '20px',
                 padding: '2px 10px',
@@ -58,7 +58,7 @@ export default function KitContents({ items }: KitContentsProps) {
               {items.length}
             </span>
           </div>
-          <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 40px 0' }} />
+          <div style={{ width: '48px', height: '3px', background: '#CC1F28', margin: '16px 0 40px 0' }} />
         </motion.div>
 
         <div style={{
@@ -78,7 +78,7 @@ export default function KitContents({ items }: KitContentsProps) {
                 style={{
                   background: '#1a1a1a',
                   border: '1px solid #2a2a2a',
-                  borderTop: '3px solid #E8650A',
+                  borderTop: '3px solid #CC1F28',
                   padding: '24px',
                   position: 'relative',
                   transition: 'transform 150ms, box-shadow 150ms, border-color 150ms',
@@ -99,7 +99,7 @@ export default function KitContents({ items }: KitContentsProps) {
                     style={{ width: '100%', height: '120px', objectFit: 'contain', marginBottom: '12px' }}
                   />
                 ) : (
-                  <Icon size={22} style={{ color: '#E8650A' }} />
+                  <Icon size={22} style={{ color: '#CC1F28' }} />
                 )}
 
                 <span
@@ -130,7 +130,7 @@ export default function KitContents({ items }: KitContentsProps) {
                     marginTop: '12px',
                     fontSize: '11px',
                     fontWeight: 600,
-                    color: '#E8650A',
+                    color: '#CC1F28',
                     background: 'rgba(232,101,10,0.1)',
                     padding: '2px 8px',
                     letterSpacing: '0.5px',

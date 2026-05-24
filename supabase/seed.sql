@@ -17,7 +17,7 @@ BEGIN
     ) VALUES (
       'KK-Fix',
       'kk-fix',
-      'Professional Conveyor Belt Repair — On-Site, Fast, Permanent',
+      'Clean. Fast. Permanent.',
       'Conveyor Belt & Rubber Lagging Repair Kit',
       'KK-Fix is a two-component polyether-based repair system for conveyor belts and rubber lagging. Formulated for mine-site conditions, it delivers a permanent, flexible repair in under an hour — no hot work, no belt removal, no downtime.',
       'Conveyor Belt Repair',
@@ -28,7 +28,7 @@ BEGIN
     ) RETURNING id INTO pid;
   ELSE
     UPDATE products SET
-      tagline    = 'Professional Conveyor Belt Repair — On-Site, Fast, Permanent',
+      tagline    = 'Clean. Fast. Permanent.',
       subtitle   = 'Conveyor Belt & Rubber Lagging Repair Kit',
       description = 'KK-Fix is a two-component polyether-based repair system for conveyor belts and rubber lagging. Formulated for mine-site conditions, it delivers a permanent, flexible repair in under an hour — no hot work, no belt removal, no downtime.',
       part_number = 'BSW-KKF-500',

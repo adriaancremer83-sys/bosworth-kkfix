@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import type { TechSpec } from '@/lib/types'
@@ -18,13 +18,13 @@ export default function TechSpecs({ specs }: TechSpecsProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.4 }}>
-          <p style={{ fontSize: '11px', fontWeight: 500, color: '#E8650A', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
+          <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
             Specifications
           </p>
           <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
             Technical Data
           </h2>
-          <div style={{ width: '48px', height: '3px', background: '#E8650A', margin: '16px 0 40px 0' }} />
+          <div style={{ width: '48px', height: '3px', background: '#CC1F28', margin: '16px 0 40px 0' }} />
         </motion.div>
 
         <motion.div

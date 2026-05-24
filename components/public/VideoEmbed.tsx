@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import { Play } from 'lucide-react'
@@ -29,7 +29,7 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
           <p style={{
             fontSize: '11px',
             fontWeight: 500,
-            color: '#E8650A',
+            color: '#CC1F28',
             textTransform: 'uppercase',
             letterSpacing: '3px',
             marginBottom: '8px',
@@ -39,7 +39,7 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
           <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
             KK-FIX Application Guide
           </h2>
-          <div style={{ width: '48px', height: '3px', background: '#E8650A', marginTop: '16px', marginBottom: '40px' }} />
+          <div style={{ width: '48px', height: '3px', background: '#CC1F28', marginTop: '16px', marginBottom: '40px' }} />
         </motion.div>
 
         <motion.div
@@ -75,12 +75,12 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
                 width: '64px',
                 height: '64px',
                 borderRadius: '50%',
-                border: '2px solid #E8650A',
+                border: '2px solid #CC1F28',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <Play size={24} style={{ color: '#E8650A', marginLeft: '3px' }} />
+                <Play size={24} style={{ color: '#CC1F28', marginLeft: '3px' }} />
               </div>
               <div style={{ textAlign: 'center' }}>
                 <p style={{ fontSize: '13px', fontWeight: 600, color: '#f0f0f0', letterSpacing: '2px', textTransform: 'uppercase' }}>Instructional Video</p>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { GripVertical, X, PlusCircle, ChevronUp, ChevronDown } from 'lucide-react'
 import type { KitContent } from '@/lib/types'
@@ -59,7 +59,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
           <div key={item._key} className="p-4 rounded-lg" style={{ background: '#0A0A0A', border: '1px solid #383838' }}>
             <div className="flex items-center gap-2 mb-3">
               <GripVertical size={16} className="flex-shrink-0" style={{ color: '#383838' }} />
-              <span className="font-display text-lg flex-shrink-0 w-6 text-center" style={{ color: '#E8650A' }}>
+              <span className="font-display text-lg flex-shrink-0 w-6 text-center" style={{ color: '#CC1F28' }}>
                 {String(i + 1).padStart(2, '0')}
               </span>
               <div className="flex items-center gap-1 ml-auto">
@@ -69,7 +69,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
                 <button type="button" onClick={() => moveDown(i)} className="p-1" style={{ color: '#8A8A8A', background: 'none', border: 'none', cursor: 'pointer' }}>
                   <ChevronDown size={14} />
                 </button>
-                <button type="button" onClick={() => remove(item._key!)} className="p-1" style={{ color: '#E8650A', background: 'none', border: 'none', cursor: 'pointer' }}>
+                <button type="button" onClick={() => remove(item._key!)} className="p-1" style={{ color: '#CC1F28', background: 'none', border: 'none', cursor: 'pointer' }}>
                   <X size={14} />
                 </button>
               </div>
@@ -81,7 +81,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
                 value={item.item_name ?? ''}
                 onChange={e => update(item._key!, 'item_name', e.target.value)}
                 style={inputStyle}
-                onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
               />
               <input
@@ -89,7 +89,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
                 value={item.item_description ?? ''}
                 onChange={e => update(item._key!, 'item_description', e.target.value)}
                 style={inputStyle}
-                onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
               />
               <input
@@ -97,7 +97,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
                 value={item.quantity ?? ''}
                 onChange={e => update(item._key!, 'quantity', e.target.value)}
                 style={inputStyle}
-                onFocus={e => { e.currentTarget.style.borderColor = '#E8650A' }}
+                onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
                 onBlur={e => { e.currentTarget.style.borderColor = '#383838' }}
               />
             </div>
@@ -122,7 +122,7 @@ export default function KitContentsEditor({ items, onChange }: KitContentsEditor
           width: '100%', padding: '10px', display: 'flex', alignItems: 'center',
           justifyContent: 'center', gap: '8px', fontSize: '13px', cursor: 'pointer',
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = '#E8650A'; e.currentTarget.style.color = '#E8650A' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#CC1F28'; e.currentTarget.style.color = '#CC1F28' }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.color = '#8A8A8A' }}>
         <PlusCircle size={14} />
         Add Item

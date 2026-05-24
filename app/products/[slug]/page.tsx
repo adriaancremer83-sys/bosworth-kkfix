@@ -34,7 +34,7 @@ function ComingSoon() {
       <Navbar productName="KK-Fix" msdsUrl={null} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', textAlign: 'center' }}>
         <div style={{ marginBottom: '24px' }}>
-          <span style={{ fontSize: '11px', letterSpacing: '3px', color: '#E8650A', textTransform: 'uppercase', fontWeight: 600 }}>Bosworth</span>
+          <span style={{ fontSize: '11px', letterSpacing: '3px', color: '#CC1F28', textTransform: 'uppercase', fontWeight: 600 }}>Bosworth</span>
         </div>
         <h1 style={{ fontSize: 'clamp(48px, 10vw, 96px)', fontWeight: 800, color: '#F5F5F0', lineHeight: 1, letterSpacing: '-2px', fontFamily: 'Barlow Condensed, sans-serif', textTransform: 'uppercase', marginBottom: '8px' }}>
           KK-FIX
@@ -42,7 +42,7 @@ function ComingSoon() {
         <p style={{ fontSize: '14px', color: '#8A8A8A', marginBottom: '48px', letterSpacing: '2px', textTransform: 'uppercase' }}>
           Conveyor Belt &amp; Rubber Lagging Repair Kit
         </p>
-        <div style={{ width: '48px', height: '2px', background: '#E8650A', marginBottom: '48px' }} />
+        <div style={{ width: '48px', height: '2px', background: '#CC1F28', marginBottom: '48px' }} />
         <p style={{ fontSize: '18px', color: '#F5F5F0', fontWeight: 500, marginBottom: '12px' }}>Content coming soon</p>
         <p style={{ fontSize: '14px', color: '#555', maxWidth: '400px' }}>
           Product details are being configured. Scan this code again shortly to view the full repair guide.

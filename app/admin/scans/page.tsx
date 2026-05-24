@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
@@ -15,7 +15,7 @@ const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), {
   ssr: false,
   loading: () => (
     <div style={{ height: MAP_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Loader2 size={24} style={{ color: '#E8650A', animation: 'spin 1s linear infinite' }} />
+      <Loader2 size={24} style={{ color: '#CC1F28', animation: 'spin 1s linear infinite' }} />
     </div>
   ),
 })
@@ -24,7 +24,7 @@ const ScanLineChart = dynamic(() => import('@/components/admin/ScanLineChart'), 
   ssr: false,
   loading: () => (
     <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Loader2 size={18} style={{ color: '#E8650A', animation: 'spin 1s linear infinite' }} />
+      <Loader2 size={18} style={{ color: '#CC1F28', animation: 'spin 1s linear infinite' }} />
     </div>
   ),
 })
@@ -51,7 +51,7 @@ const CARD: React.CSSProperties = {
   padding: '20px 24px',
 }
 
-const ORANGE = '#E8650A'
+const ORANGE = '#CC1F28'
 
 function StatCard({ label, value, icon: Icon, sub }: {
   label: string; value: string | number; icon: React.ElementType; sub?: string

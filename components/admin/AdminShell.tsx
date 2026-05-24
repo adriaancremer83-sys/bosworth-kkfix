@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Menu } from 'lucide-react'
@@ -36,7 +36,7 @@ export default function AdminShell({ userEmail, children }: AdminShellProps) {
             style={{ color: '#F5F5F0', background: 'transparent' }}>
             <Menu size={22} />
           </button>
-          <span className="font-display text-xl tracking-widest" style={{ color: '#E8650A' }}>KK-FIX</span>
+          <span className="font-display text-xl tracking-widest" style={{ color: '#CC1F28' }}>KK-FIX</span>
           <span className="text-xs tracking-widest uppercase" style={{ color: '#8A8A8A' }}>Admin</span>
         </div>
 

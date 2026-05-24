@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -20,7 +20,7 @@ interface ProductFormProps {
 
 const TABS = ['Basic Info', 'Kit Contents', 'Instructions', 'Safety Info', 'Tech Specs']
 
-const ORANGE = '#E8650A'
+const ORANGE = '#CC1F28'
 const BORDER = '#383838'
 
 const inputStyle: React.CSSProperties = {
@@ -55,12 +55,12 @@ function BadgeEditor({ badges, onChange }: { badges: string[]; onChange: (b: str
         {badges.map(b => (
           <span key={b} style={{
             background: 'rgba(232,101,10,0.1)', border: '1px solid rgba(232,101,10,0.3)',
-            color: '#E8650A', padding: '4px 10px', fontSize: '11px', letterSpacing: '1px',
+            color: '#CC1F28', padding: '4px 10px', fontSize: '11px', letterSpacing: '1px',
             display: 'flex', alignItems: 'center', gap: '6px',
           }}>
             {b}
             <button type="button" onClick={() => onChange(badges.filter(x => x !== b))}
-              style={{ background: 'none', border: 'none', color: '#E8650A', cursor: 'pointer', padding: 0, lineHeight: 1 }}>
+              style={{ background: 'none', border: 'none', color: '#CC1F28', cursor: 'pointer', padding: 0, lineHeight: 1 }}>
               <X size={10} />
             </button>
           </span>
