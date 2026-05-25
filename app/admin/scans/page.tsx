@@ -347,8 +347,8 @@ export default function ScansPage() {
                   <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {scan.location_source === 'gps'
-                        ? <MapPin size={12} style={{ color: '#22c55e', flexShrink: 0 }} title="GPS location" />
-                        : <Wifi size={12} style={{ color: '#555', flexShrink: 0 }} title="IP geolocation" />}
+                        ? <span title="GPS location"><MapPin size={12} style={{ color: '#22c55e', flexShrink: 0 }} /></span>
+                        : <span title="IP geolocation"><Wifi size={12} style={{ color: '#555', flexShrink: 0 }} /></span>}
                       <span style={{ color: '#f0f0f0' }}>
                         {scan.city ?? '—'}
                         {scan.region ? `, ${scan.region}` : ''}
