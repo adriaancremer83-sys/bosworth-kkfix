@@ -130,7 +130,7 @@ export default function ScansClient({ initialScans }: { initialScans: Scan[] }) 
     if (!silent) return
     setSyncing(true)
     try {
-      const res = await fetch('/api/admin/scans')
+      const res = await fetch('/api/admin/scans', { cache: 'no-store' })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setScans(data as Scan[])
@@ -144,7 +144,7 @@ export default function ScansClient({ initialScans }: { initialScans: Scan[] }) 
   async function refresh() {
     setSyncing(true)
     try {
-      const res = await fetch('/api/admin/scans')
+      const res = await fetch('/api/admin/scans', { cache: 'no-store' })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setScans(data as Scan[])

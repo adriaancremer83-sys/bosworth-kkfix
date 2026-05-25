@@ -23,6 +23,29 @@ function getGPSCoords(): Promise<{ lat: number | null; lng: number | null }> {
   })
 }
 
+// Reverse geocode GPS coords to get accurate city/region/country
+async function reverseGeocode(lat: number, lng: number): Promise<{ city: string | null; region: string | null; country: string | null }> {
+  try {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 5000)
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      { signal: controller.signal, headers: { 'User-Agent': 'KK-Fix/1.0 (bosworth-kkfix)' } }
+    )
+    clearTimeout(timer)
+    if (res.ok) {
+      const d = await res.json()
+      const addr = d.address ?? {}
+      return {
+        city:    addr.city ?? addr.town ?? addr.village ?? addr.suburb ?? null,
+        region:  addr.state ?? addr.county ?? null,
+        country: addr.country ?? null,
+      }
+    }
+  } catch { /* timeout or network error */ }
+  return { city: null, region: null, country: null }
+}
+
 async function getIpGeo(): Promise<{ city: string | null; region: string | null; country: string | null; ip: string | null }> {
   try {
     const raw = localStorage.getItem(IP_CACHE_KEY)
@@ -63,10 +86,28 @@ export default function QRScanTracker({ productId }: { productId: string | null 
     async function track() {
       const ua = navigator.userAgent
 
+      // Always fetch IP geo for the IP address field; run GPS in parallel
       const [gps, ipGeo] = await Promise.all([getGPSCoords(), getIpGeo()])
 
-      const locationSource: 'gps' | 'ip' | 'unknown' =
-        gps.lat != null ? 'gps' : ipGeo.ip != null ? 'ip' : 'unknown'
+      let city: string | null
+      let region: string | null
+      let country: string | null
+      let locationSource: 'gps' | 'ip' | 'unknown'
+
+      if (gps.lat != null && gps.lng != null) {
+        // GPS succeeded — reverse geocode for accurate city/region/country
+        const geo = await reverseGeocode(gps.lat, gps.lng)
+        city    = geo.city    ?? ipGeo.city
+        region  = geo.region  ?? ipGeo.region
+        country = geo.country ?? ipGeo.country
+        locationSource = 'gps'
+      } else {
+        // No GPS — fall back to IP geolocation
+        city    = ipGeo.city
+        region  = ipGeo.region
+        country = ipGeo.country
+        locationSource = ipGeo.ip != null ? 'ip' : 'unknown'
+      }
 
       try {
         const res = await fetch('/api/track-scan', {
@@ -75,9 +116,9 @@ export default function QRScanTracker({ productId }: { productId: string | null 
           body: JSON.stringify({
             lat:             gps.lat,
             lng:             gps.lng,
-            city:            ipGeo.city,
-            region:          ipGeo.region,
-            country:         ipGeo.country,
+            city,
+            region,
+            country,
             device_type:     getDeviceType(ua),
             user_agent:      ua,
             batch_id:        batchId  ?? null,
