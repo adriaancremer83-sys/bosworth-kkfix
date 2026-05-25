@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -14,6 +14,13 @@ interface Selection {
   widthMm:     string
   areaUnknown: boolean
   surface:     string[]
+}
+
+interface KitSpec {
+  kitSize: '300g' | '500g'
+  bags: number
+  applicationTime: number   // total minutes
+  coverageProvided: number  // cm²
 }
 
 // ─── Step data ───────────────────────────────────────────────────────────────
@@ -47,17 +54,16 @@ function fmtArea(s: Selection): string {
   return `${s.lengthMm} × ${s.widthMm} mm (${s.damageArea} cm²)`
 }
 
-// ─── Bag quantity calculator ──────────────────────────────────────────────────
+// ─── Kit coverage calculator ──────────────────────────────────────────────────
 
-function getRecommendedBags(s: Selection): string {
-  const isDelamination = s.damageType === 'delamination'
-  const multiSurface   = s.surface.length >= 3
-  const large          = s.damageArea >= 300
-
-  if ((large || isDelamination) && multiSurface) return '4+'
-  if (large || isDelamination)                   return '3'
-  if (s.damageArea >= 100)                       return '2'
-  return '1'
+function getKitSpec(area: number): KitSpec {
+  if (area < 400)  return { kitSize: '300g', bags: 1, applicationTime: 45,  coverageProvided: 400  }
+  if (area < 650)  return { kitSize: '500g', bags: 1, applicationTime: 45,  coverageProvided: 650  }
+  if (area < 1200) return { kitSize: '500g', bags: 2, applicationTime: 90,  coverageProvided: 1300 }
+  if (area < 1800) return { kitSize: '500g', bags: 3, applicationTime: 135, coverageProvided: 1950 }
+  if (area < 2600) return { kitSize: '500g', bags: 4, applicationTime: 180, coverageProvided: 2600 }
+  const bags = Math.ceil(area / 650)
+  return { kitSize: '500g', bags, applicationTime: bags * 45, coverageProvided: bags * 650 }
 }
 
 // ─── Recommendation engine ───────────────────────────────────────────────────
@@ -71,7 +77,7 @@ interface Recommendation {
   notes: string[]
 }
 
-function getRecommendation(s: Selection): Recommendation {
+function getRecommendation(s: Selection, kitSpec: KitSpec): Recommendation {
   const large    = s.damageArea > 100
   const heavy    = ['gouge', 'delamination', 'puncture'].includes(s.damageType)
   const needPrep = s.surface.some(x => ['wet', 'oily', 'rough'].includes(x))
@@ -92,14 +98,14 @@ function getRecommendation(s: Selection): Recommendation {
 
   const extraItems: string[] = []
   if (needPrep || s.surface.includes('oily')) extraItems.push('Surface Solvent / Cleaner')
-  if (['cut', 'gouge', 'delamination'].includes(s.damageType)) extraItems.push('Reinforcement Fabric Strip')
-  if (large || wideBelt) extraItems.push('Additional Compound Pack (x2)')
+  if (['cut', 'gouge', 'delamination'].includes(s.damageType) && s.damageArea >= 100)
+    extraItems.push('Reinforcing Fabric Strip')
   if (repaired) extraItems.push('Surface Abrader / Prep Tool')
 
   const notes: string[] = []
   if (s.surface.includes('wet'))       notes.push('Surface must be towel-dried before application — KK-FIX does not cure on standing water.')
   if (s.surface.includes('oily'))      notes.push('Degrease thoroughly with solvent; re-apply until swab shows clean.')
-  if (repaired)                        notes.push('Scarify the existing repair to a depth of 2mm before applying fresh compound.')
+  if (repaired)                        notes.push('Scarify the existing repair to a depth of 2 mm before applying fresh compound.')
   if (s.damageType === 'delamination') notes.push('Inject compound between layers and clamp for a minimum of 2 hours.')
   if (large)                           notes.push('Apply in two layers for damage areas over 100 cm²; allow 45 min between coats.')
 
@@ -108,22 +114,23 @@ function getRecommendation(s: Selection): Recommendation {
     grade,
     items: [...baseItems, ...extraItems],
     prepNote: needPrep ? 'Surface preparation is required before application.' : null,
-    applicationTime: large ? '3–4 hours' : heavy ? '2–3 hours' : '1–2 hours',
+    applicationTime: `${kitSpec.applicationTime} min`,
     notes,
   }
 }
 
 // ─── Order link builders ──────────────────────────────────────────────────────
 
-function buildWhatsAppUrl(sel: Selection, rec: Recommendation, bags: string): string {
+function buildWhatsAppUrl(sel: Selection, rec: Recommendation, kitSpec: KitSpec): string {
   const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
   const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
+  const kitStr   = `${kitSpec.bags}× ${kitSpec.kitSize} kit${kitSpec.bags > 1 ? 's' : ''}`
   const msg =
     `Hi Bosworth,\n\n` +
     `I'd like to order KK-Fix based on a Kit Builder assessment:\n\n` +
-    `*Kit:* ${rec.kit}\n` +
+    `*Kit:* ${rec.kit} (${kitSpec.kitSize})\n` +
     `*Grade:* ${rec.grade}\n` +
-    `*Recommended Quantity:* ${bags} bag(s)\n\n` +
+    `*Recommended Quantity:* ${kitStr}\n\n` +
     `*Damage Type:* ${damage}\n` +
     `*Belt Width:* ${sel.beltWidth}\n` +
     `*Damage Area:* ${fmtArea(sel)}\n` +
@@ -132,15 +139,16 @@ function buildWhatsAppUrl(sel: Selection, rec: Recommendation, bags: string): st
   return `https://wa.me/27733701457?text=${encodeURIComponent(msg)}`
 }
 
-function buildEmailUrl(sel: Selection, rec: Recommendation, bags: string): string {
+function buildEmailUrl(sel: Selection, rec: Recommendation, kitSpec: KitSpec): string {
   const damage   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
   const surfaces = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
+  const kitStr   = `${kitSpec.bags}× ${kitSpec.kitSize} kit${kitSpec.bags > 1 ? 's' : ''}`
   const body =
     `Hi Bosworth,\n\n` +
     `I would like to place an order for KK-Fix based on the following Kit Builder assessment:\n\n` +
-    `Kit: ${rec.kit}\n` +
+    `Kit: ${rec.kit} (${kitSpec.kitSize})\n` +
     `Grade: ${rec.grade}\n` +
-    `Recommended Quantity: ${bags} bag(s)\n\n` +
+    `Recommended Quantity: ${kitStr}\n\n` +
     `Assessment Details:\n` +
     `- Damage Type: ${damage}\n` +
     `- Belt Width: ${sel.beltWidth}\n` +
@@ -154,89 +162,145 @@ function buildEmailUrl(sel: Selection, rec: Recommendation, bags: string): strin
 
 // ─── PDF generator ───────────────────────────────────────────────────────────
 
-async function generatePDF(sel: Selection, rec: Recommendation) {
+async function generatePDF(sel: Selection, rec: Recommendation, kitSpec: KitSpec) {
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
-  const W      = 210
-  const ORANGE = [232, 101, 10]  as [number, number, number]
-  const DARK   = [10,  10,  10]  as [number, number, number]
-  const GREY   = [138, 154, 176] as [number, number, number]
-  const WHITE  = [240, 240, 240] as [number, number, number]
+  const W     = 210
+  const RED   = [204, 31,  40]  as [number, number, number]
+  const DARK  = [10,  10,  10]  as [number, number, number]
+  const GREY  = [156, 163, 175] as [number, number, number]
+  const BLACK = [17,  17,  17]  as [number, number, number]
+  const WHITE = [240, 240, 240] as [number, number, number]
+  const MID   = [80,  80,  80]  as [number, number, number]
 
+  // ── Header ──────────────────────────────────────────────────────────────────
+  const HEADER_H = 26
   doc.setFillColor(...DARK)
-  doc.rect(0, 0, W, 40, 'F')
-  doc.setFillColor(...ORANGE)
-  doc.rect(0, 37, W, 3, 'F')
+  doc.rect(0, 0, W, HEADER_H, 'F')
+  doc.setFillColor(...RED)
+  doc.rect(0, HEADER_H, W, 1, 'F')
 
-  doc.setFontSize(28); doc.setTextColor(...WHITE); doc.setFont('helvetica', 'bold')
-  doc.text('KK-FIX', 14, 22)
-  doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
-  doc.text('by BOSWORTH', 14, 29)
-  doc.text('Kit Builder Report', 14, 35)
-  doc.setFontSize(9)
-  doc.text(`Generated: ${new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'long', year: 'numeric' })}`, W - 14, 29, { align: 'right' })
+  // Attempt to embed Bosworth logo
+  let logoLoaded = false
+  try {
+    const res = await fetch('/images/bosworth-logo-new.png')
+    const blob = await res.blob()
+    const dataUrl: string = await new Promise(resolve => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.readAsDataURL(blob)
+    })
+    doc.addImage(dataUrl, 'PNG', 14, 4, 52, 14)
+    logoLoaded = true
+  } catch {}
 
-  let y = 52
+  if (!logoLoaded) {
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold'); doc.setTextColor(...WHITE)
+    doc.text('BOSWORTH', 14, 13)
+  }
+
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
+  doc.text('KIT ASSESSMENT REPORT', 14, 22)
+
+  doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.setTextColor(...WHITE)
+  doc.text('KK-FIX', W - 14, 13, { align: 'right' })
+
+  const dateStr = new Date().toLocaleDateString('en-ZA', { day: '2-digit', month: 'long', year: 'numeric' })
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
+  doc.text(`Generated: ${dateStr}`, W - 14, 22, { align: 'right' })
+
+  let y = HEADER_H + 10
 
   function sectionHeader(title: string) {
-    doc.setFillColor(...ORANGE)
-    doc.rect(14, y - 4, 4, 10, 'F')
-    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...DARK)
-    doc.text(title, 21, y + 2)
-    y += 12
+    doc.setFillColor(...RED)
+    doc.rect(14, y, 3, 8, 'F')
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...RED)
+    doc.text(title.toUpperCase(), 20, y + 5.5)
+    y += 14
   }
 
   function row(label: string, value: string) {
-    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GREY)
-    doc.text(label.toUpperCase(), 14, y)
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(...DARK)
-    doc.text(value, 70, y)
+    doc.setFontSize(8.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GREY)
+    doc.text(label.toUpperCase(), 20, y)
+    doc.setFont('helvetica', 'bold'); doc.setTextColor(...BLACK)
+    doc.text(value, 100, y)
     y += 7
   }
 
+  // ── Damage Assessment ───────────────────────────────────────────────────────
   sectionHeader('DAMAGE ASSESSMENT')
-  const damageLabel = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
-  row('Damage Type', damageLabel)
-  row('Belt Width',  sel.beltWidth)
-  row('Damage Area', fmtArea(sel))
-  row('Surface',     sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean')
-  row('Recommended Qty', `${getRecommendedBags(sel)} bag(s)`)
+  const damageLabel   = DAMAGE_TYPES.find(d => d.id === sel.damageType)?.label ?? sel.damageType
+  const surfaceLabel  = sel.surface.map(s => SURFACES.find(x => x.id === s)?.label ?? s).join(', ') || 'Dry & Clean'
+  const dimsStr       = sel.areaUnknown ? 'Not measured' : `${sel.lengthMm} mm × ${sel.widthMm} mm`
+  const areaStr       = sel.areaUnknown ? 'Est. 150 cm² (medium estimate)' : `${sel.damageArea} cm²`
+  const recQtyStr     = `${kitSpec.bags}× ${kitSpec.kitSize} kit${kitSpec.bags > 1 ? 's' : ''}`
+
+  row('Damage Type',       damageLabel)
+  row('Belt Width',        sel.beltWidth)
+  row('Damage Dimensions', dimsStr)
+  row('Damage Area',       areaStr)
+  row('Surface Condition', surfaceLabel)
+  row('Recommended Qty',   recQtyStr)
   y += 4
 
+  // ── Recommended Kit ─────────────────────────────────────────────────────────
   sectionHeader('RECOMMENDED KIT')
-  doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...ORANGE)
-  doc.text(rec.kit, 14, y); y += 7
-  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...DARK)
-  doc.text(`Grade: ${rec.grade}`, 14, y)
-  doc.text(`Est. Application Time: ${rec.applicationTime}`, 110, y)
+
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...RED)
+  doc.text(rec.kit, 20, y); y += 8
+
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...BLACK)
+  doc.text(`Grade: ${rec.grade}`, 20, y)
+  doc.text(`Kit Size: ${kitSpec.kitSize}`, 110, y)
+  y += 8
+
+  const timeBreakdown = `45 min per bag × ${kitSpec.bags} bag${kitSpec.bags > 1 ? 's' : ''} = ${kitSpec.applicationTime} min total`
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...MID)
+  doc.text('ESTIMATED APPLICATION TIME', 20, y)
+  y += 5
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...BLACK)
+  doc.text(timeBreakdown, 20, y)
+  y += 8
+
+  const neededArea = sel.areaUnknown ? '~150 cm²' : `${sel.damageArea} cm²`
+  const coverageStr = `${kitSpec.coverageProvided} cm² provided  ·  ${neededArea} needed`
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...MID)
+  doc.text('COVERAGE', 20, y)
+  y += 5
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...BLACK)
+  doc.text(coverageStr, 20, y)
   y += 12
 
-  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...GREY)
-  doc.text('KIT CONTENTS', 14, y); y += 6
+  // ── Kit Contents ─────────────────────────────────────────────────────────────
+  sectionHeader('KIT CONTENTS')
   rec.items.forEach(item => {
-    doc.setFillColor(...ORANGE); doc.circle(16, y - 1.5, 1, 'F')
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...DARK)
-    doc.text(item, 20, y); y += 6
+    doc.setFillColor(...RED); doc.circle(22, y - 1.5, 1.2, 'F')
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...BLACK)
+    doc.text(item, 26, y); y += 7
   })
   y += 4
 
+  // ── Application Notes ────────────────────────────────────────────────────────
   if (rec.notes.length > 0) {
     sectionHeader('APPLICATION NOTES')
     rec.notes.forEach(note => {
-      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...ORANGE)
-      doc.text('NOTE', 14, y)
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(80, 80, 80)
-      const lines = doc.splitTextToSize(note, W - 42)
-      doc.text(lines, 28, y)
+      doc.setFillColor(...RED); doc.rect(20, y - 3.5, 1.5, 5.5, 'F')
+      doc.setFontSize(8.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...MID)
+      const lines = doc.splitTextToSize(note, W - 50)
+      doc.text(lines, 25, y)
       y += lines.length * 5 + 5
     })
   }
 
-  doc.setFillColor(...DARK); doc.rect(0, 277, W, 20, 'F')
+  // ── Footer ───────────────────────────────────────────────────────────────────
+  const FOOTER_Y = 277
+  doc.setFillColor(...RED);  doc.rect(0, FOOTER_Y - 1, W, 1, 'F')
+  doc.setFillColor(...DARK); doc.rect(0, FOOTER_Y, W, 20, 'F')
   doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
-  doc.text('Bosworth (Pty) Ltd  ·  21 Vereeniging Rd, Alrode  ·  pulleys@bosworth.co.za  ·  +27 11 864 1643', W / 2, 287, { align: 'center' })
-  doc.text('ISO 9001:2015 · ISO 14001:2015 · ISO 45001:2015 · Member CMA South Africa', W / 2, 292, { align: 'center' })
+  doc.text('Bosworth (Pty) Ltd  ·  21 Vereeniging Rd, Alrode  ·  pulleys@bosworth.co.za  ·  +27 11 864 1643', W / 2, FOOTER_Y + 7, { align: 'center' })
+  doc.setFontSize(7); doc.setTextColor(...MID)
+  doc.text('ISO 9001:2015  ·  ISO 14001:2015  ·  ISO 45001:2015  ·  Member CMA South Africa', W / 2, FOOTER_Y + 13, { align: 'center' })
 
   doc.save(`KK-FIX-Kit-Assessment-${Date.now()}.pdf`)
 }
@@ -255,7 +319,7 @@ function slideVariants(dir: 1 | -1) {
 
 function answerCardStyle(selected: boolean): React.CSSProperties {
   return {
-    background:  selected ? 'rgba(232,101,10,0.10)' : '#111111',
+    background:  selected ? 'rgba(204,31,40,0.10)' : '#111111',
     border:      `1.5px solid ${selected ? '#CC1F28' : '#2a2a2a'}`,
     padding:     '18px',
     textAlign:   'left',
@@ -315,12 +379,14 @@ export default function KitBuilder() {
   }
 
   async function downloadPDF() {
+    const ks = getKitSpec(sel.damageArea)
     setGen(true)
-    try { await generatePDF(sel, getRecommendation(sel)) }
+    try { await generatePDF(sel, getRecommendation(sel, ks), ks) }
     finally { setGen(false) }
   }
 
-  const rec = done ? getRecommendation(sel) : null
+  const kitSpec = done ? getKitSpec(sel.damageArea) : null
+  const rec     = done && kitSpec ? getRecommendation(sel, kitSpec) : null
 
   return (
     <section id="kit-builder" style={{ background: '#111111', padding: 'clamp(40px, 6vw, 80px)' }}>
@@ -350,7 +416,7 @@ export default function KitBuilder() {
                       width: '22px', height: '22px', borderRadius: '50%', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '11px', fontWeight: 700,
-                      background: i < step ? '#CC1F28' : i === step ? 'rgba(232,101,10,0.2)' : '#1a1a1a',
+                      background: i < step ? '#CC1F28' : i === step ? 'rgba(204,31,40,0.2)' : '#1a1a1a',
                       border: `1.5px solid ${i <= step ? '#CC1F28' : '#2a2a2a'}`,
                       color: i < step ? '#fff' : i === step ? '#CC1F28' : '#444',
                       transition: 'all 250ms',
@@ -475,7 +541,6 @@ export default function KitBuilder() {
                       ))}
                     </div>
 
-                    {/* Live area display */}
                     {sel.damageArea > 0 && !sel.areaUnknown && (
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '16px', padding: '12px 16px', background: 'rgba(204,31,40,0.07)', border: '1px solid rgba(204,31,40,0.2)' }}>
                         <span style={{ fontSize: '13px', color: '#8a9ab0' }}>Area:</span>
@@ -484,7 +549,6 @@ export default function KitBuilder() {
                       </div>
                     )}
 
-                    {/* Not sure option */}
                     <button
                       type="button"
                       onClick={() => setSel(p => ({ ...p, areaUnknown: true, lengthMm: '', widthMm: '', damageArea: 150 }))}
@@ -523,7 +587,7 @@ export default function KitBuilder() {
                       return (
                         <button key={s.id} type="button" onClick={() => toggleSurface(s.id)}
                           style={{
-                            background: active ? 'rgba(232,101,10,0.12)' : 'transparent',
+                            background: active ? 'rgba(204,31,40,0.12)' : 'transparent',
                             border: `1.5px solid ${active ? '#CC1F28' : '#2a2a2a'}`,
                             color: active ? '#CC1F28' : '#8a9ab0',
                             padding: '10px 20px', fontSize: '14px', cursor: 'pointer',
@@ -539,24 +603,22 @@ export default function KitBuilder() {
               )}
 
               {/* ── Result ── */}
-              {done && rec && (() => {
-                const bags = getRecommendedBags(sel)
-                return (
+              {done && rec && kitSpec && (() => (
                 <motion.div key="result" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
 
-                  {/* Top row: title + PDF */}
+                  {/* Title row + PDF button */}
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
                     <div>
                       <p style={{ fontSize: '11px', color: '#CC1F28', letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '6px' }}>Recommendation</p>
                       <h3 className="font-display" style={{ fontSize: 'clamp(28px, 4vw, 40px)', color: '#f0f0f0', lineHeight: 1, marginBottom: '4px' }}>
                         {rec.kit}
                       </h3>
-                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px' }}>
-                        <span style={{ background: 'rgba(232,101,10,0.12)', border: '1px solid rgba(232,101,10,0.3)', color: '#CC1F28', padding: '4px 12px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+                        <span style={{ background: 'rgba(204,31,40,0.12)', border: '1px solid rgba(204,31,40,0.3)', color: '#CC1F28', padding: '4px 12px', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>
                           {rec.grade.toUpperCase()}
                         </span>
-                        <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px' }}>
-                          Est. {rec.applicationTime}
+                        <span style={{ background: '#111', border: '1px solid #2a2a2a', color: '#8a9ab0', padding: '4px 12px', fontSize: '12px', fontWeight: 600 }}>
+                          {kitSpec.kitSize} KIT
                         </span>
                       </div>
                     </div>
@@ -568,19 +630,40 @@ export default function KitBuilder() {
                         display: 'flex', alignItems: 'center', gap: '8px',
                         transition: 'background 150ms', flexShrink: 0,
                       }}
-                      onMouseEnter={e => { if (!generating) e.currentTarget.style.background = '#C4530A' }}
+                      onMouseEnter={e => { if (!generating) e.currentTarget.style.background = '#a31820' }}
                       onMouseLeave={e => { if (!generating) e.currentTarget.style.background = generating ? '#1a1a1a' : '#CC1F28' }}>
                       <Download size={14} />
                       {generating ? 'Generating…' : 'Download PDF'}
                     </button>
                   </div>
 
-                  {/* Recommended quantity */}
-                  <div style={{ marginBottom: '20px', padding: '16px 20px', background: 'rgba(232,101,10,0.07)', border: '1.5px solid rgba(232,101,10,0.25)' }}>
-                    <p style={{ fontSize: '11px', color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Recommended Quantity</p>
-                    <p className="font-display" style={{ fontSize: '36px', color: '#CC1F28', lineHeight: 1 }}>
-                      {bags} <span style={{ fontSize: '18px', color: '#CC1F28', opacity: 0.7 }}>bag{bags === '1' ? '' : 's'}</span>
-                    </p>
+                  {/* Stat cards: bags, time, coverage */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ padding: '16px 20px', background: 'rgba(204,31,40,0.07)', border: '1.5px solid rgba(204,31,40,0.25)' }}>
+                      <p style={{ fontSize: '10px', color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Bags Required</p>
+                      <p className="font-display" style={{ fontSize: '36px', color: '#CC1F28', lineHeight: 1 }}>
+                        {kitSpec.bags}
+                        <span style={{ fontSize: '15px', opacity: 0.7 }}> × {kitSpec.kitSize}</span>
+                      </p>
+                    </div>
+                    <div style={{ padding: '16px 20px', background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+                      <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Application Time</p>
+                      <p className="font-display" style={{ fontSize: '36px', color: '#f0f0f0', lineHeight: 1 }}>
+                        {kitSpec.applicationTime}<span style={{ fontSize: '14px', color: '#555' }}> min</span>
+                      </p>
+                      <p style={{ fontSize: '10px', color: '#555', marginTop: '4px' }}>45 min × {kitSpec.bags} bag{kitSpec.bags > 1 ? 's' : ''}</p>
+                    </div>
+                    <div style={{ padding: '16px 20px', background: '#0d0d0d', border: '1px solid #1e1e1e' }}>
+                      <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 700, marginBottom: '4px' }}>Coverage</p>
+                      <p className="font-display" style={{ fontSize: '24px', color: '#f0f0f0', lineHeight: 1.1 }}>
+                        {kitSpec.coverageProvided} cm²
+                      </p>
+                      {!sel.areaUnknown && (
+                        <p style={{ fontSize: '10px', color: '#555', marginTop: '4px' }}>
+                          {sel.damageArea} cm² needed · {kitSpec.coverageProvided - sel.damageArea} cm² surplus
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {rec.prepNote && (
@@ -616,38 +699,21 @@ export default function KitBuilder() {
                     )}
                   </div>
 
-                  {/* Order action buttons */}
+                  {/* Order buttons */}
                   <div style={{ borderTop: '1px solid #1e1e1e', paddingTop: '24px' }}>
                     <p style={{ fontSize: '10px', color: '#555', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '14px', fontWeight: 700 }}>
                       Place Your Order
                     </p>
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                      <a
-                        href={buildWhatsAppUrl(sel, rec, bags)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '8px',
-                          background: '#25D366', color: '#fff',
-                          padding: '12px 24px', fontSize: '14px', fontWeight: 600,
-                          textDecoration: 'none', transition: 'background 150ms',
-                          letterSpacing: '0.3px',
-                        }}
+                      <a href={buildWhatsAppUrl(sel, rec, kitSpec)} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#25D366', color: '#fff', padding: '12px 24px', fontSize: '14px', fontWeight: 600, textDecoration: 'none', transition: 'background 150ms', letterSpacing: '0.3px' }}
                         onMouseEnter={e => { e.currentTarget.style.background = '#1EB857' }}
                         onMouseLeave={e => { e.currentTarget.style.background = '#25D366' }}>
                         <MessageCircle size={16} />
                         Order via WhatsApp
                       </a>
-                      <a
-                        href={buildEmailUrl(sel, rec, bags)}
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '8px',
-                          background: 'transparent',
-                          border: '1.5px solid #CC1F28', color: '#CC1F28',
-                          padding: '12px 24px', fontSize: '14px', fontWeight: 600,
-                          textDecoration: 'none', transition: 'background 150ms, color 150ms',
-                          letterSpacing: '0.3px',
-                        }}
+                      <a href={buildEmailUrl(sel, rec, kitSpec)}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'transparent', border: '1.5px solid #CC1F28', color: '#CC1F28', padding: '12px 24px', fontSize: '14px', fontWeight: 600, textDecoration: 'none', transition: 'background 150ms, color 150ms', letterSpacing: '0.3px' }}
                         onMouseEnter={e => { e.currentTarget.style.background = '#CC1F28'; e.currentTarget.style.color = '#fff' }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#CC1F28' }}>
                         <Mail size={16} />
@@ -657,8 +723,7 @@ export default function KitBuilder() {
                   </div>
 
                 </motion.div>
-                )
-              })()}
+              ))()}
 
             </AnimatePresence>
           </div>
@@ -688,9 +753,7 @@ export default function KitBuilder() {
                   <ChevronLeft size={14} /> Back
                 </button>
 
-                <span style={{ fontSize: '12px', color: '#555' }}>
-                  Step {step + 1} of {TOTAL_STEPS}
-                </span>
+                <span style={{ fontSize: '12px', color: '#555' }}>Step {step + 1} of {TOTAL_STEPS}</span>
 
                 <motion.button
                   onClick={() => canNext && go(1)}
@@ -702,7 +765,7 @@ export default function KitBuilder() {
                     cursor: canNext ? 'pointer' : 'not-allowed',
                     display: 'flex', alignItems: 'center', gap: '6px', transition: 'background 150ms',
                   }}
-                  onMouseEnter={e => { if (canNext) e.currentTarget.style.background = '#C4530A' }}
+                  onMouseEnter={e => { if (canNext) e.currentTarget.style.background = '#a31820' }}
                   onMouseLeave={e => { if (canNext) e.currentTarget.style.background = '#CC1F28' }}>
                   {step === TOTAL_STEPS - 1 ? 'Get Recommendation' : 'Next'} <ChevronRight size={14} />
                 </motion.button>
