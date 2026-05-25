@@ -8,7 +8,7 @@ interface NavbarProps {
   msdsUrl: string | null
 }
 
-export default function Navbar({ productName, msdsUrl }: NavbarProps) {
+export default function Navbar({ msdsUrl }: NavbarProps) {
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10"
@@ -34,41 +34,9 @@ export default function Navbar({ productName, msdsUrl }: NavbarProps) {
           style={{ fontSize: '15px', letterSpacing: '2px', color: '#CC1F28', textTransform: 'uppercase' }}>
           KK-FIX
         </span>
-        <div style={{ width: '1px', height: '20px', background: '#2a2a2a' }} />
-        <span style={{ fontSize: '13px', fontWeight: 400, color: '#8a9ab0' }}>
-          {productName}
-        </span>
       </div>
 
       <div className="flex items-center gap-3">
-        <a
-          href="https://bosworth-demo.vercel.app/products/kk-fix"
-          style={{
-            border: '1px solid #CC1F28',
-            color: '#CC1F28',
-            padding: '7px 16px',
-            fontSize: '12px',
-            fontWeight: 500,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            textDecoration: 'none',
-            background: 'transparent',
-            letterSpacing: '0.5px',
-            transition: 'background 150ms, color 150ms',
-            whiteSpace: 'nowrap',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = '#CC1F28'
-            e.currentTarget.style.color = '#fff'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = '#CC1F28'
-          }}>
-          ← GO TO BOSWORTH
-        </a>
-
         {msdsUrl && (
           <a
             href={msdsUrl}

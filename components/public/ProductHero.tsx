@@ -83,6 +83,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
               lineHeight: 0.88,
               color: '#f0f0f0',
               letterSpacing: '-1px',
+              fontWeight: 900,
             }}>
             KK-FIX
           </h1>
