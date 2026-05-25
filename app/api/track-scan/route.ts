@@ -10,6 +10,7 @@ export async function POST(request: Request) {
       lat, lng, city, region, country,
       device_type, user_agent,
       batch_id, unit_id, ip_address, product_id,
+      location_source,
     } = body
 
     // Use client-reported IP; fall back to request headers when ipapi.co is unavailable
@@ -37,6 +38,7 @@ export async function POST(request: Request) {
       unit_id: unit_id ?? null,
       ip_address: resolvedIp,
       product_id: (product_id as string | null) ?? null,
+      location_source: (location_source as string | null) ?? 'unknown',
     })
 
     if (error) {

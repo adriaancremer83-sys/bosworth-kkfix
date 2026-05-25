@@ -6,7 +6,7 @@ import ScanErrorBoundary from '@/components/admin/ScanErrorBoundary'
 import {
   MapPin, Monitor, Smartphone, Tablet,
   Download, RefreshCw, Loader2, Activity,
-  Globe, Calendar, Package,
+  Globe, Calendar, Package, Wifi,
 } from 'lucide-react'
 
 const MAP_HEIGHT = 'clamp(240px, 50vw, 400px)'
@@ -43,6 +43,7 @@ interface Scan {
   unit_id: string | null
   ip_address: string | null
   product_id: string | null
+  location_source: 'gps' | 'ip' | 'unknown' | null
 }
 
 const CARD: React.CSSProperties = {
@@ -170,6 +171,7 @@ export default function ScansPage() {
 
   const today = new Date().toISOString().slice(0, 10)
   const scansToday = scans.filter(s => s.timestamp.startsWith(today)).length
+  const gpsScans = scans.filter(s => s.location_source === 'gps').length
   const uniqueLocations = new Set(scans.map(s => `${s.city},${s.country}`).filter(x => x !== ',')).size
   const regionCounts = scans.reduce<Record<string, number>>((acc, s) => {
     const k = s.region ?? s.city ?? 'Unknown'
@@ -231,6 +233,7 @@ export default function ScansPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px', marginBottom: '32px' }}>
         <StatCard label="Total Scans" value={scans.length} icon={Activity} />
         <StatCard label="Scans Today" value={scansToday} icon={Calendar} />
+        <StatCard label="GPS Accurate" value={gpsScans} icon={MapPin} sub={`${scans.length > 0 ? Math.round((gpsScans / scans.length) * 100) : 0}% of all scans`} />
         <StatCard label="Unique Locations" value={uniqueLocations} icon={Globe} />
         <StatCard label="Top Region" value={topRegion} icon={MapPin} sub="most active" />
       </div>
@@ -343,7 +346,9 @@ export default function ScansPage() {
                   </td>
                   <td style={{ padding: '12px 16px', fontSize: '13px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <MapPin size={12} style={{ color: '#555', flexShrink: 0 }} />
+                      {scan.location_source === 'gps'
+                        ? <MapPin size={12} style={{ color: '#22c55e', flexShrink: 0 }} title="GPS location" />
+                        : <Wifi size={12} style={{ color: '#555', flexShrink: 0 }} title="IP geolocation" />}
                       <span style={{ color: '#f0f0f0' }}>
                         {scan.city ?? '—'}
                         {scan.region ? `, ${scan.region}` : ''}

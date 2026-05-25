@@ -18,7 +18,7 @@ function getGPSCoords(): Promise<{ lat: number | null; lng: number | null }> {
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       ()  => resolve({ lat: null, lng: null }),
-      { timeout: 8000, maximumAge: 60000 }
+      { timeout: 5000, maximumAge: 60000 }
     )
   })
 }
@@ -65,22 +65,26 @@ export default function QRScanTracker({ productId }: { productId: string | null 
 
       const [gps, ipGeo] = await Promise.all([getGPSCoords(), getIpGeo()])
 
+      const locationSource: 'gps' | 'ip' | 'unknown' =
+        gps.lat != null ? 'gps' : ipGeo.ip != null ? 'ip' : 'unknown'
+
       try {
         const res = await fetch('/api/track-scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            lat:         gps.lat,
-            lng:         gps.lng,
-            city:        ipGeo.city,
-            region:      ipGeo.region,
-            country:     ipGeo.country,
-            device_type: getDeviceType(ua),
-            user_agent:  ua,
-            batch_id:    batchId  ?? null,
-            unit_id:     unitId   ?? null,
-            ip_address:  ipGeo.ip,
-            product_id:  productId,
+            lat:             gps.lat,
+            lng:             gps.lng,
+            city:            ipGeo.city,
+            region:          ipGeo.region,
+            country:         ipGeo.country,
+            device_type:     getDeviceType(ua),
+            user_agent:      ua,
+            batch_id:        batchId  ?? null,
+            unit_id:         unitId   ?? null,
+            ip_address:      ipGeo.ip,
+            product_id:      productId,
+            location_source: locationSource,
           }),
         })
         if (!res.ok) {
