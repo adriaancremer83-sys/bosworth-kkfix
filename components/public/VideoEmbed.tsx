@@ -6,7 +6,7 @@ interface VideoEmbedProps {
   videoUrl: string | null
 }
 
-const LOCAL_INSTRUCTIONS_VIDEO = '/video/kk-fix-instructions.mp4'
+const LOCAL_INSTRUCTIONS_VIDEO = '/video/Instructions.mp4'
 
 // Accept watch URLs, short URLs, or already-correct embed URLs
 function toEmbedUrl(url: string): string {
@@ -43,7 +43,7 @@ export default function VideoEmbed({ videoUrl }: VideoEmbedProps) {
           }}>
             How It Works
           </p>
-          <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
+          <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1, fontWeight: 800, textTransform: 'uppercase' }}>
             KK-FIX Application Guide
           </h2>
           <div style={{ width: '48px', height: '3px', background: '#CC1F28', marginTop: '16px', marginBottom: '40px' }} />

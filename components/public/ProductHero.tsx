@@ -100,14 +100,33 @@ export default function ProductHero({ product }: ProductHeroProps) {
           </p>
         </motion.div>
 
+        {/* CLEAN. FAST. RELIABLE. tagline */}
+        <motion.p
+          className="font-display"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.28 }}
+          style={{
+            fontSize: 'clamp(22px, 4vw, 40px)',
+            fontWeight: 700,
+            color: '#ffffff',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            margin: '20px 0 0',
+          }}>
+          Clean.{' '}
+          <span style={{ color: '#CC1F28' }}>Fast.</span>{' '}
+          Reliable.
+        </motion.p>
+
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
+          transition={{ duration: 0.6, delay: 0.35, ease: 'easeOut' }}
           style={{
             height: '3px',
             background: '#CC1F28',
-            margin: '28px 0',
+            margin: '24px 0',
             transformOrigin: 'left',
             maxWidth: '480px',
           }}
@@ -116,14 +135,14 @@ export default function ProductHero({ product }: ProductHeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.38 }}
+          transition={{ duration: 0.4, delay: 0.44 }}
           style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', alignItems: 'flex-start' }}>
           <div style={{ flex: '1 1 300px' }}>
-            <p style={{ fontSize: 'clamp(16px, 2.5vw, 22px)', fontWeight: 300, color: '#8a9ab0', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', fontWeight: 400, color: '#8a9ab0', lineHeight: 1.7 }}>
               {product.tagline}
             </p>
             {(product as any).subtitle && (
-              <p style={{ fontSize: '14px', color: '#555', marginTop: '8px', lineHeight: 1.6 }}>
+              <p style={{ fontSize: '16px', color: '#555', marginTop: '8px', lineHeight: 1.7 }}>
                 {(product as any).subtitle}
               </p>
             )}
@@ -153,7 +172,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+            transition={{ duration: 0.4, delay: 0.55 }}
             className="font-mono-tech"
             style={{
               marginTop: '20px',
@@ -170,7 +189,7 @@ export default function ProductHero({ product }: ProductHeroProps) {
             href="#instructions"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.55 }}
+            transition={{ duration: 0.4, delay: 0.60 }}
             className="font-display"
             style={{
               background: '#CC1F28',
@@ -182,15 +201,17 @@ export default function ProductHero({ product }: ProductHeroProps) {
               display: 'inline-block',
               transition: 'background 150ms',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#C4530A' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#a31820' }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#CC1F28' }}>
             VIEW INSTRUCTIONS ↓
           </motion.a>
           <motion.a
-            href="#kit-builder"
+            href={product.msds_url ?? '/msds/kk-fix-msds.pdf'}
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.62 }}
+            transition={{ duration: 0.4, delay: 0.67 }}
             className="font-display"
             style={{
               border: '1px solid #CC1F28',
@@ -209,6 +230,32 @@ export default function ProductHero({ product }: ProductHeroProps) {
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.background = 'transparent'
               ;(e.currentTarget as HTMLElement).style.color = '#CC1F28'
+            }}>
+            DOWNLOAD MSDS
+          </motion.a>
+          <motion.a
+            href="#kit-builder"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.74 }}
+            className="font-display"
+            style={{
+              border: '1px solid #2a2a2a',
+              color: '#8a9ab0',
+              padding: '14px 32px',
+              fontSize: '16px',
+              letterSpacing: '2px',
+              textDecoration: 'none',
+              display: 'inline-block',
+              transition: 'border-color 150ms, color 150ms',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = '#CC1F28'
+              ;(e.currentTarget as HTMLElement).style.color = '#CC1F28'
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = '#2a2a2a'
+              ;(e.currentTarget as HTMLElement).style.color = '#8a9ab0'
             }}>
             BUILD YOUR KIT →
           </motion.a>

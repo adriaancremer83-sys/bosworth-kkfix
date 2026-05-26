@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import {
   Flame, AlertOctagon, Leaf, ShieldCheck,
-  Eye, Wind, Trash2, AlertTriangle,
+  Eye, Wind, Trash2, AlertTriangle, Hand,
 } from 'lucide-react'
 import type { SafetyItem } from '@/lib/types'
 
@@ -51,11 +51,11 @@ function SafetyCard({ item, index }: { item: SafetyItem; index: number }) {
         gap: '14px',
         alignItems: 'flex-start',
       }}>
-      <Icon size={18} style={{ color: s.iconColor, flexShrink: 0, marginTop: '2px' }} />
+      <Icon size={20} style={{ color: s.iconColor, flexShrink: 0, marginTop: '2px' }} />
       <div>
-        <p style={{ fontSize: '14px', fontWeight: 600, color: '#f0f0f0' }}>{item.label}</p>
+        <p style={{ fontSize: '15px', fontWeight: 600, color: '#f0f0f0' }}>{item.label}</p>
         {item.description && (
-          <p style={{ fontSize: '13px', color: '#8a9ab0', marginTop: '2px', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '15px', color: '#8a9ab0', marginTop: '4px', lineHeight: 1.7 }}>
             {item.description}
           </p>
         )}
@@ -69,10 +69,10 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
   const ppeItems = items.filter(i => i.type === 'ppe' || i.type === 'disposal')
 
   const firstAid = [
-    { label: 'Skin',       action: 'Wash with soap and water for at least 15 minutes.',          icon: '🖐' },
-    { label: 'Eyes',       action: 'Rinse with clean water for 15 minutes. Seek medical attention.', icon: '👁' },
-    { label: 'Inhalation', action: 'Move to fresh air immediately. Rest and keep warm.',           icon: '💨' },
-    { label: 'Ingestion',  action: 'Do NOT induce vomiting. Seek immediate medical attention.',    icon: '🚨' },
+    { label: 'Skin',       action: 'Wash with soap and water for at least 15 minutes.',               Icon: Hand },
+    { label: 'Eyes',       action: 'Rinse with clean water for 15 minutes. Seek medical attention.',  Icon: Eye },
+    { label: 'Inhalation', action: 'Move to fresh air immediately. Rest and keep warm.',              Icon: Wind },
+    { label: 'Ingestion',  action: 'Do NOT induce vomiting. Seek immediate medical attention.',       Icon: AlertTriangle },
   ]
 
   return (
@@ -87,7 +87,7 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
             <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Safety
             </p>
-            <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1 }}>
+            <h2 className="font-display" style={{ fontSize: 'clamp(40px, 6vw, 56px)', color: '#f0f0f0', lineHeight: 1, fontWeight: 800, textTransform: 'uppercase' }}>
               Safety Information
             </h2>
             <div style={{ width: '48px', height: '3px', background: '#CC1F28', margin: '16px 0 40px 0' }} />
@@ -120,12 +120,12 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
             <p style={{ fontSize: '11px', fontWeight: 500, color: '#CC1F28', textTransform: 'uppercase', letterSpacing: '3px', marginBottom: '8px' }}>
               Emergency
             </p>
-            <h3 className="font-display" style={{ fontSize: 'clamp(32px, 4vw, 44px)', color: '#f0f0f0', marginBottom: '32px' }}>
+            <h3 className="font-display" style={{ fontSize: 'clamp(32px, 4vw, 44px)', color: '#f0f0f0', marginBottom: '32px', fontWeight: 800, textTransform: 'uppercase' }}>
               First Aid
             </h3>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             {firstAid.map((fa, i) => (
               <motion.div
                 key={fa.label}
@@ -136,11 +136,19 @@ export default function SafetyPanel({ items }: SafetyPanelProps) {
                 style={{
                   background: '#111111',
                   border: '1px solid #1e1e1e',
-                  padding: '20px',
+                  borderTop: '2px solid #CC1F28',
+                  padding: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
                 }}>
-                <div style={{ fontSize: '22px', marginBottom: '12px' }}>{fa.icon}</div>
-                <p style={{ fontSize: '13px', fontWeight: 700, color: '#f0f0f0', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '1px' }}>{fa.label}</p>
-                <p style={{ fontSize: '13px', color: '#8a9ab0', lineHeight: 1.55 }}>{fa.action}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'rgba(204,31,40,0.1)', border: '1px solid rgba(204,31,40,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <fa.Icon size={20} style={{ color: '#CC1F28' }} />
+                  </div>
+                  <p style={{ fontSize: '15px', fontWeight: 700, color: '#f0f0f0', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: 'Barlow Condensed, sans-serif' }}>{fa.label}</p>
+                </div>
+                <p style={{ fontSize: '15px', color: '#8a9ab0', lineHeight: 1.7 }}>{fa.action}</p>
               </motion.div>
             ))}
           </div>

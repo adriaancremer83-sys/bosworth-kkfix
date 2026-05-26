@@ -12,7 +12,7 @@ import InstructionSteps from '@/components/public/InstructionSteps'
 import SafetyPanel from '@/components/public/SafetyPanel'
 import TechSpecs from '@/components/public/TechSpecs'
 import KitBuilder from '@/components/public/KitBuilder'
-import MSDSDownload from '@/components/public/MSDSDownload'
+import Gallery from '@/components/public/Gallery'
 import ProductFooter from '@/components/public/ProductFooter'
 import QRScanTracker from '@/components/public/QRScanTracker'
 
@@ -73,8 +73,8 @@ export default async function ProductPage({ params }: PageProps) {
       <InstructionSteps instructions={product.instructions} />
       <KitBuilder />
       <SafetyPanel items={product.safety_items} />
+      <Gallery />
       <TechSpecs specs={product.tech_specs} />
-      <MSDSDownload msdsUrl={product.msds_url} />
       <ProductFooter />
     </main>
   )
