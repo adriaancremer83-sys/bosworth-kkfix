@@ -6,7 +6,7 @@ interface VideoEmbedProps {
   videoUrl: string | null
 }
 
-const LOCAL_INSTRUCTIONS_VIDEO = '/video/Instructions.mp4'
+const LOCAL_INSTRUCTIONS_VIDEO = '/video/instruction_new.mp4'
 
 // Accept watch URLs, short URLs, or already-correct embed URLs
 function toEmbedUrl(url: string): string {

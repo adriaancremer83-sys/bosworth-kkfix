@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-const IMAGES = Array.from({ length: 27 }, (_, i) => ({
-  src: `/images/gallery${i + 1}.jpeg`,
+const IMAGES = Array.from({ length: 19 }, (_, i) => ({
+  src: `/images2/new${i + 1}.jpeg`,
   alt: `KK-Fix conveyor belt repair in the field — image ${i + 1}`,
 }))
 
@@ -68,6 +68,7 @@ export default function Gallery() {
       </div>
 
       {/* Carousel */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 clamp(24px, 6vw, 80px)' }}>
       <div
         style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', background: '#111', touchAction: 'pan-y' }}
         onPointerDown={e => { touchStartX.current = e.clientX }}
@@ -143,6 +144,7 @@ export default function Gallery() {
             />
           </motion.div>
         </AnimatePresence>
+      </div>
       </div>
 
       {/* Dot indicators */}
