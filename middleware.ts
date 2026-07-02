@@ -16,15 +16,15 @@ export async function middleware(request: NextRequest) {
   if (isAdminRoute && !isPublicAdminPath) {
     const password = process.env.ADMIN_PASSWORD
 
-    if (password) {
-      const token    = request.cookies.get('kk-admin')?.value
-      const expected = await computeExpectedToken(password)
+    // Fail closed: with no ADMIN_PASSWORD configured there is no valid session,
+    // so admin must never be reachable (the login route also rejects in that case).
+    const token    = request.cookies.get('kk-admin')?.value
+    const expected = password ? await computeExpectedToken(password) : null
 
-      if (token !== expected) {
-        const loginUrl = new URL('/admin/login', request.url)
-        loginUrl.searchParams.set('from', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
+    if (!expected || token !== expected) {
+      const loginUrl = new URL('/admin/login', request.url)
+      loginUrl.searchParams.set('from', pathname)
+      return NextResponse.redirect(loginUrl)
     }
   }
 

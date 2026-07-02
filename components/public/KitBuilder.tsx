@@ -298,9 +298,9 @@ async function generatePDF(sel: Selection, rec: Recommendation, kitSpec: KitSpec
   doc.setFillColor(...RED);  doc.rect(0, FOOTER_Y - 1, W, 1, 'F')
   doc.setFillColor(...DARK); doc.rect(0, FOOTER_Y, W, 20, 'F')
   doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY)
-  doc.text('Bosworth (Pty) Ltd  ·  21 Vereeniging Rd, Alrode  ·  pulleys@bosworth.co.za  ·  +27 11 864 1643', W / 2, FOOTER_Y + 7, { align: 'center' })
+  doc.text('Bosworth — A Division of Hudaco Trading (Pty) Ltd  ·  Alrode, Gauteng  ·  pulleys@bosworth.co.za  ·  +27 11 864 1643', W / 2, FOOTER_Y + 7, { align: 'center' })
   doc.setFontSize(7); doc.setTextColor(...MID)
-  doc.text('ISO 9001:2015  ·  ISO 14001:2015  ·  ISO 45001:2015  ·  Member CMA South Africa', W / 2, FOOTER_Y + 13, { align: 'center' })
+  doc.text('ISO 9001:2015  ·  ISO 14001:2015  ·  ISO 45001:2018  ·  Member CMA South Africa', W / 2, FOOTER_Y + 13, { align: 'center' })
 
   doc.save(`KK-FIX-Kit-Assessment-${Date.now()}.pdf`)
 }

@@ -27,8 +27,8 @@ export default function ProductFooter() {
               Address
             </p>
             <p style={{ fontSize: '13px', color: '#555', lineHeight: 1.9 }}>
-              21 Vereeniging Rd<br />
-              Alrode<br />
+              Cnr. Vereeniging &amp; Juyn Roads<br />
+              Alrode, Gauteng<br />
               South Africa
             </p>
           </div>
@@ -55,7 +55,7 @@ export default function ProductFooter() {
             <p className="font-mono-tech" style={{ fontSize: '12px', color: '#555', lineHeight: 1.9 }}>
               ISO 9001:2015<br />
               ISO 14001:2015<br />
-              ISO 45001:2015<br />
+              ISO 45001:2018<br />
               Member: CMA of South Africa
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function ProductFooter() {
           gap: '12px',
         }}>
           <p style={{ fontSize: '11px', color: '#333' }}>
-            © 2025 Bosworth — A Division of Hudaco Trading Ltd.
+            © {new Date().getFullYear()} Bosworth — A Division of Hudaco Trading (Pty) Ltd.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <p style={{ fontSize: '11px', color: '#333' }}>Part of the Hudaco Group</p>
@@ -84,14 +84,6 @@ export default function ProductFooter() {
               onMouseEnter={e => { e.currentTarget.style.color = '#CC1F28' }}
               onMouseLeave={e => { e.currentTarget.style.color = '#555' }}>
               Built by Forge Systems
-            </a>
-            <span style={{ fontSize: '11px', color: '#222' }}>·</span>
-            <a
-              href="/admin/products"
-              style={{ fontSize: '11px', color: '#333', textDecoration: 'none', transition: 'color 150ms' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#CC1F28' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#333' }}>
-              Admin
             </a>
           </div>
         </div>
