@@ -10,19 +10,19 @@ async function computeExpectedToken(password: string): Promise<string> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
-  const isPublicAdminPath = pathname === '/admin/login' || pathname === '/api/admin/login'
+  const isStatsRoute = pathname.startsWith('/stats') || pathname.startsWith('/api/stats')
+  const isPublicStatsPath = pathname === '/stats/login' || pathname === '/api/stats/login'
 
-  if (isAdminRoute && !isPublicAdminPath) {
+  if (isStatsRoute && !isPublicStatsPath) {
     const password = process.env.ADMIN_PASSWORD
 
     // Fail closed: with no ADMIN_PASSWORD configured there is no valid session,
-    // so admin must never be reachable (the login route also rejects in that case).
-    const token    = request.cookies.get('kk-admin')?.value
+    // so /stats must never be reachable (the login route also rejects in that case).
+    const token    = request.cookies.get('kk-stats')?.value
     const expected = password ? await computeExpectedToken(password) : null
 
     if (!expected || token !== expected) {
-      const loginUrl = new URL('/admin/login', request.url)
+      const loginUrl = new URL('/stats/login', request.url)
       loginUrl.searchParams.set('from', pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -32,5 +32,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/stats/:path*', '/api/stats/:path*'],
 }

@@ -17,7 +17,7 @@ export async function GET() {
     .limit(1000)
 
   if (error) {
-    console.error('[admin/scans] read error:', error.message, error.details)
+    console.error('[stats/scans] read error:', error.message, error.details)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 

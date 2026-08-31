@@ -1,9 +1,13 @@
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { getProductBySlug } from '@/lib/products-server'
+import { getProductBySlug, getAllProducts } from '@/lib/products-server'
+
+export const dynamicParams = false
+
+export async function generateStaticParams() {
+  const products = await getAllProducts()
+  return products.map(p => ({ slug: p.slug }))
+}
 import Navbar from '@/components/public/Navbar'
 import ProductHero from '@/components/public/ProductHero'
 import VideoEmbed from '@/components/public/VideoEmbed'

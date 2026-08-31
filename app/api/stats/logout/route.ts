@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 export async function POST() {
   const res = NextResponse.json({ ok: true })
-  res.cookies.set('kk-admin', '', {
+  res.cookies.set('kk-stats', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

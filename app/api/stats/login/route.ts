@@ -18,7 +18,6 @@ export async function POST(request: Request) {
     }
 
     if (!password || password !== expected) {
-      // Constant-time-ish: always hash before returning to avoid timing hints
       await hashToken(password ?? '')
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
     }
@@ -26,7 +25,7 @@ export async function POST(request: Request) {
     const token = await hashToken(expected)
 
     const res = NextResponse.json({ ok: true })
-    res.cookies.set('kk-admin', token, {
+    res.cookies.set('kk-stats', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

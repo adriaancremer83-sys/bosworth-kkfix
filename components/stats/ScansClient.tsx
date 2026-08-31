@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import ScanErrorBoundary from '@/components/admin/ScanErrorBoundary'
+import ScanErrorBoundary from '@/components/stats/ScanErrorBoundary'
 import {
   MapPin, Monitor, Smartphone, Tablet,
   Download, RefreshCw, Loader2, Activity,
@@ -11,7 +11,7 @@ import {
 
 const MAP_HEIGHT = 'clamp(240px, 50vw, 400px)'
 
-const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), {
+const ScanMap = dynamic(() => import('@/components/stats/ScanMap'), {
   ssr: false,
   loading: () => (
     <div style={{ height: MAP_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -20,7 +20,7 @@ const ScanMap = dynamic(() => import('@/components/admin/ScanMap'), {
   ),
 })
 
-const ScanLineChart = dynamic(() => import('@/components/admin/ScanLineChart'), {
+const ScanLineChart = dynamic(() => import('@/components/stats/ScanLineChart'), {
   ssr: false,
   loading: () => (
     <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -130,7 +130,7 @@ export default function ScansClient({ initialScans }: { initialScans: Scan[] }) 
     if (!silent) return
     setSyncing(true)
     try {
-      const res = await fetch('/api/admin/scans', { cache: 'no-store' })
+      const res = await fetch('/api/stats/scans', { cache: 'no-store' })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setScans(data as Scan[])
@@ -144,7 +144,7 @@ export default function ScansClient({ initialScans }: { initialScans: Scan[] }) 
   async function refresh() {
     setSyncing(true)
     try {
-      const res = await fetch('/api/admin/scans', { cache: 'no-store' })
+      const res = await fetch('/api/stats/scans', { cache: 'no-store' })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setScans(data as Scan[])

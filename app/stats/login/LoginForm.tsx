@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -8,7 +8,7 @@ import Image from 'next/image'
 export default function LoginForm() {
   const router       = useRouter()
   const searchParams = useSearchParams()
-  const from         = searchParams.get('from') ?? '/admin/products'
+  const from         = searchParams.get('from') ?? '/stats'
 
   const [password,  setPassword]  = useState('')
   const [show,      setShow]      = useState(false)
@@ -24,7 +24,7 @@ export default function LoginForm() {
     setError(null)
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch('/api/stats/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
@@ -53,11 +53,10 @@ export default function LoginForm() {
       className="min-h-screen flex items-center justify-center px-4"
       style={{ background: '#0a0a0a' }}>
 
-      {/* Background glow */}
       <div style={{
         position: 'fixed', top: '30%', left: '50%', transform: 'translateX(-50%)',
         width: '600px', height: '300px',
-        background: 'radial-gradient(ellipse, rgba(232,101,10,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse, rgba(204,31,40,0.06) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 
@@ -69,10 +68,8 @@ export default function LoginForm() {
         position: 'relative',
         animation: shake ? 'shake 0.4s ease' : 'none',
       }}>
-        {/* Orange top rule */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: '#CC1F28' }} />
 
-        {/* Logo + brand */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{ position: 'relative', height: '32px', width: '140px', margin: '0 auto 12px' }}>
             <Image
@@ -85,17 +82,16 @@ export default function LoginForm() {
             />
           </div>
           <p className="font-display" style={{ fontSize: '13px', color: '#CC1F28', letterSpacing: '4px', textTransform: 'uppercase' }}>
-            KK-FIX Admin
+            KK-FIX Scan Stats
           </p>
           <div style={{ width: '40px', height: '2px', background: '#1e1e1e', margin: '12px auto 0' }} />
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Error */}
           {error && (
             <div style={{
-              background: 'rgba(232,101,10,0.08)',
-              border: '1px solid rgba(232,101,10,0.25)',
+              background: 'rgba(204,31,40,0.08)',
+              border: '1px solid rgba(204,31,40,0.25)',
               padding: '10px 14px',
               marginBottom: '18px',
               display: 'flex',
@@ -119,12 +115,12 @@ export default function LoginForm() {
                 type={show ? 'text' : 'password'}
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(null) }}
-                placeholder="Enter admin password"
+                placeholder="Enter password"
                 autoComplete="current-password"
                 autoFocus
                 style={{
                   width: '100%', background: '#0a0a0a',
-                  border: `1px solid ${error ? 'rgba(232,101,10,0.4)' : '#2a2a2a'}`,
+                  border: `1px solid ${error ? 'rgba(204,31,40,0.4)' : '#2a2a2a'}`,
                   color: '#f0f0f0', padding: '12px 44px 12px 14px',
                   fontSize: '14px', outline: 'none',
                   fontFamily: 'Inter, sans-serif',
@@ -132,7 +128,7 @@ export default function LoginForm() {
                   transition: 'border-color 150ms',
                 }}
                 onFocus={e => { e.currentTarget.style.borderColor = '#CC1F28' }}
-                onBlur={e => { e.currentTarget.style.borderColor = error ? 'rgba(232,101,10,0.4)' : '#2a2a2a' }}
+                onBlur={e => { e.currentTarget.style.borderColor = error ? 'rgba(204,31,40,0.4)' : '#2a2a2a' }}
               />
               <button
                 type="button"
@@ -160,7 +156,7 @@ export default function LoginForm() {
               transition: 'background 150ms, color 150ms',
               fontFamily: 'Inter, sans-serif',
             }}
-            onMouseEnter={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#C4530A' }}
+            onMouseEnter={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#a31820' }}
             onMouseLeave={e => { if (!loading && password.trim()) e.currentTarget.style.background = '#CC1F28' }}>
             {loading ? <><Loader2 size={14} className="animate-spin" /> Signing in…</> : 'Sign In'}
           </button>
@@ -171,7 +167,6 @@ export default function LoginForm() {
         </p>
       </div>
 
-      {/* Shake keyframe */}
       <style>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
