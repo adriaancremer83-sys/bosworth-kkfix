@@ -1,37 +1,33 @@
 -- KK-Fix QR scan tracking — runs in the KIA-KAHA MINING Supabase project.
--- Run once in the Supabase SQL editor. Safe to re-run (idempotent).
+-- This is also included at the end of the Kia-Kaha repo's supabase/schema.sql;
+-- run it once in the Supabase SQL editor. Idempotent.
 --
--- This portal serves one product and stores no content in Supabase; the only
--- table it uses is this one. product_id is a plain text tag ('kk-fix'), not a
--- foreign key, so it does not depend on any other table in the Kia-Kaha schema.
+-- This portal serves one product and stores no content in Supabase; qr_scans is
+-- the only table it touches. Both the insert (/api/track-scan) and the read
+-- (/stats) run server-side with the service-role key, which bypasses RLS — so
+-- RLS is left on with no policies (deny-by-default), matching the rest of the
+-- Kia-Kaha schema. product_id is a plain text tag ('kk-fix'), not a foreign key.
 
-CREATE TABLE IF NOT EXISTS qr_scans (
-  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  timestamp       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  lat             FLOAT,
-  lng             FLOAT,
-  city            TEXT,
-  region          TEXT,
-  country         TEXT,
-  device_type     TEXT,
-  user_agent      TEXT,
-  batch_id        TEXT,
-  unit_id         TEXT,
-  ip_address      TEXT,
-  product_id      TEXT,
-  location_source TEXT DEFAULT 'ip'
+create table if not exists public.qr_scans (
+  id              uuid primary key default gen_random_uuid(),
+  timestamp       timestamptz not null default now(),
+  lat             double precision,
+  lng             double precision,
+  city            text,
+  region          text,
+  country         text,
+  device_type     text,
+  user_agent      text,
+  batch_id        text,
+  unit_id         text,
+  ip_address      text,
+  product_id      text,
+  location_source text default 'ip'
 );
 
-CREATE INDEX IF NOT EXISTS qr_scans_timestamp_idx ON qr_scans (timestamp DESC);
-CREATE INDEX IF NOT EXISTS qr_scans_batch_idx     ON qr_scans (batch_id);
-CREATE INDEX IF NOT EXISTS qr_scans_product_idx   ON qr_scans (product_id);
+create index if not exists qr_scans_timestamp_idx on public.qr_scans(timestamp desc);
+create index if not exists qr_scans_batch_idx     on public.qr_scans(batch_id);
+create index if not exists qr_scans_product_idx   on public.qr_scans(product_id);
 
-ALTER TABLE qr_scans ENABLE ROW LEVEL SECURITY;
-
--- The public product page inserts a scan row with no auth.
-DROP POLICY IF EXISTS "Public insert qr_scans" ON qr_scans;
-CREATE POLICY "Public insert qr_scans" ON qr_scans
-  FOR INSERT WITH CHECK (true);
-
--- Reads happen only from the server with the service-role key (which bypasses
--- RLS); no anon SELECT policy, so scan data is not publicly readable.
+alter table public.qr_scans enable row level security;
+-- No anon/authenticated policies => insert and read only via the service role.
