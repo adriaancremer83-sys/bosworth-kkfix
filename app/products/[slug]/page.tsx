@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProductBySlug, getAllProducts } from '@/lib/products-server'
+import { KK_FIX_DOCS } from '@/lib/product-data'
 
 export const dynamicParams = false
 
@@ -18,6 +19,7 @@ import TechSpecs from '@/components/public/TechSpecs'
 import KitBuilder from '@/components/public/KitBuilder'
 import Gallery from '@/components/public/Gallery'
 import ProductFooter from '@/components/public/ProductFooter'
+import Documentation from '@/components/public/Documentation'
 import QRScanTracker from '@/components/public/QRScanTracker'
 
 interface PageProps {
@@ -79,6 +81,7 @@ export default async function ProductPage({ params }: PageProps) {
       <SafetyPanel items={product.safety_items} />
       <Gallery />
       <TechSpecs specs={product.tech_specs} />
+      <Documentation docs={KK_FIX_DOCS} />
       <ProductFooter />
     </main>
   )

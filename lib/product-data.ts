@@ -9,6 +9,27 @@ import type { ProductWithRelations } from './types'
 const PRODUCT_ID = 'kk-fix'
 const NOW = '2024-01-01T00:00:00.000Z'
 
+/** Downloadable documents shown in the Documentation section. */
+export const KK_FIX_DOCS: {
+  title: string
+  meta: string
+  url: string
+  note?: string
+}[] = [
+  {
+    title: 'Safety Data Sheet (SDS)',
+    meta: 'Version 2 — Mercury Free · November 2025',
+    url: '/msds/kk-fix-msds.pdf',
+  },
+  {
+    title: 'MASC flammability test report',
+    meta: 'MASC 26-4549 · SANS 340 (2016) Ed 3, clause 5.3.2.1.1 a) & b) · issued 6 October 2025',
+    url: '/docs/kk-fix-masc-26-4549.pdf',
+    note:
+      'Tested by Mining and Surface Certification (a SANAS-accredited test lab). The samples tested showed no flame, re-flame or smouldering and complied with the requirements. The report covers the samples submitted and applies within South Africa.',
+  },
+]
+
 export const KK_FIX: ProductWithRelations = {
   id: PRODUCT_ID,
   name: 'KK-Fix',
